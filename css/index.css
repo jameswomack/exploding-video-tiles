@@ -1,0 +1,23 @@
+.reset {
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.center {
+	margin: 0 auto;
+}
+
+.hide {
+	display: none
+}
+
+.invert {
+	background: black;
+  color: white;
+}
+
+#exploded-tile-container {
+	width: 1000px;
+	height: 600px;
+}
