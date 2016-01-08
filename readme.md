@@ -4,8 +4,8 @@
 
 by [James Womack](http://womack.io)
 
-<img src="http://f.cl.ly/items/3Q2K2h3I3U3E3n2b2N11/Screen%20Shot%202016-01-05%20at%2013.55.06.png" alt="elliptical effect" width="600" />
-<img src="http://f.cl.ly/items/1l0d1X1f023T0y3x3O3O/Screen%20Shot%202016-01-05%20at%2013.54.49.png" alt="rectangular effect" width="600" />
+<img src="http://i.imgur.com/oRdLPRf.png" alt="elliptical effect" width="600" />
+<img src="http://i.imgur.com/YPHQv5n.png" alt="rectangular effect" width="600" />
 
 
 ### Motivations
