@@ -1,33 +1,33 @@
-'use strict';
 
 // Based on http://craftymind.com/factory/html5video/CanvasVideo.html
 
 
 (function () {
-  'use strict';
 
-  let videoEl
-  let copyCtx
-  let copyCanvasEl
-  let drawCtx
-  let videoWidth
-  let videoHeight
-  let videoRatio
-  let tileMode = 'rectangles'
+  var videoEl
+  var copyCtx
+  var copyCanvasEl
+  var drawCtx
+  var videoWidth
+  var videoHeight
+  var videoRatio
+  var tileMode = 'rectangles'
 
-  let RAD   = Math.PI / 180
-  let tiles = new Tiles()
+  var pointilismHistory = {};
 
-  let sourceRect = {
+  var RAD   = Math.PI / 180
+  var tiles = new Tiles()
+
+  var sourceRect = {
     x: 0, y: 0, width: 0, height: 0
   }
 
-  const FRAME_PROCESSING_INTERVAL = 24
-  const TILE_WIDTH = 32
-  const TILE_HEIGHT = 24
-  const TILE_CENTER_WIDTH = 16
-  const TILE_CENTER_HEIGHT = 12
-  const PAINTRECT = {
+  var FRAME_PROCESSING_INTERVAL = 2
+  var TILE_WIDTH = 12
+  var TILE_HEIGHT = 12
+  var TILE_CENTER_WIDTH = 16
+  var TILE_CENTER_HEIGHT = 12
+  var PAINTRECT = {
     x: 0, y: 0, width: 1000, height: 600
   }
 
@@ -59,14 +59,14 @@
 
 
   function createTiles () {
-    let offset = {
+    var offset = {
       x : TILE_CENTER_WIDTH + (PAINTRECT.width - sourceRect.width) / 2,
       y : TILE_CENTER_HEIGHT + (PAINTRECT.height - sourceRect.height) / 2
     }
-    let y = 0
+    var y = 0
 
     while (y < sourceRect.height) {
-      let x = 0
+      var x = 0
 
       while (x < sourceRect.width) {
         tiles.push(new Tile({
@@ -92,8 +92,8 @@
 
 
   function pageCoordinatesFromEvent (e) {
-    let pageX = 0
-    let pageY = 0
+    var pageX = 0
+    var pageY = 0
 
     if (e.pageX || e.pageY)
       return e
@@ -110,23 +110,26 @@
 
 
   function dropBomb (evt) {
-    let e = evt || window.event
-    let el = e.currentTarget
+    var e = evt || window.event
+    var el = e.currentTarget
 
-    let coords = pageCoordinatesFromEvent(e)
+    var coords = pageCoordinatesFromEvent(e)
 
     explode(coords.pageX - el.offsetLeft, coords.pageY - el.offsetTop)
   }
 
 
-  function Tile (options = {
-    video: {
-      x : 0, y : 0
-    },
-    offset : {
-      x : 0, y : 0
+  function Tile (options) {
+    if (!options) {
+      options = {
+        video: {
+          x : 0, y : 0
+        },
+        offset : {
+          x : 0, y : 0
+        }
+      }
     }
-  }) {
     this.videoX   = options.video.x
     this.videoY   = options.video.y
     this.originX  = options.offset.x + options.video.x
@@ -143,9 +146,9 @@
   }
 
   Tile.prototype.draw = function () {
-    const isExpanding   = this.force > 0.0001
-    const isContracting = this.rotation !== 0 || this.currentX !== this.originX || this.currentY !== this.originY
-    let   isStill
+    var isExpanding   = this.force > 0.0001
+    var isContracting = this.rotation !== 0 || this.currentX !== this.originX || this.currentY !== this.originY
+    var   isStill
 
     if (isExpanding) {
       //expand
@@ -166,9 +169,9 @@
 
     } else if (isContracting) {
       //contract
-      let diffx = (this.originX - this.currentX) * 0.2
-      let diffy = (this.originY - this.currentY) * 0.2
-      let diffRot = (0 - this.rotation) * 0.2
+      var diffx = (this.originX - this.currentX) * 0.2
+      var diffy = (this.originY - this.currentY) * 0.2
+      var diffRot = (0 - this.rotation) * 0.2
 
       if (Math.abs(diffx) < 0.5)
         this.currentX = this.originX
@@ -193,8 +196,8 @@
     tileMode === 'ellipses' ? drawEllipses(this, drawCtx, !isStill) : drawSquares(this, drawCtx, !isStill)
   }
 
-  const SHADOW_DIVISOR = 70
-  const SHADOW_BLUR    = 3
+  var SHADOW_DIVISOR = 70
+  var SHADOW_BLUR    = 3
 
   function addShadow (tile, ctx) {
     ctx.shadowOffsetX = (tile.originX - tile.currentX) / SHADOW_DIVISOR
@@ -218,20 +221,44 @@
     ctx.save()
 
     // Create a circle
-    ctx.beginPath()
+//    ctx.beginPath()
 
-    ctx.arc(tile.currentX, tile.currentY, TILE_HEIGHT, 0, Math.PI * 2, false)
+//    ctx.arc(tile.currentX, tile.currentY, TILE_HEIGHT, 0, Math.PI * 2, false)
 
     // Clip to the current path
-    ctx.clip()
+//    ctx.clip();
+//    ctx.drawImage(copyCanvasEl, tile.videoX, tile.videoY, TILE_WIDTH*(videoRatio*10), TILE_HEIGHT*(videoRatio*10), -(videoRatio*10)+tile.currentX-TILE_WIDTH/2, -(videoRatio*10)+tile.currentY-TILE_HEIGHT/2, videoWidth, videoHeight)
 
-    ctx.drawImage(copyCanvasEl, tile.videoX, tile.videoY, TILE_WIDTH*(videoRatio*10), TILE_HEIGHT*(videoRatio*10), -(videoRatio*10)+tile.currentX-TILE_WIDTH/2, -(videoRatio*10)+tile.currentY-TILE_HEIGHT/2, videoWidth, videoHeight)
+    if (!pointilismHistory[tile.currentX]) {
+      pointilismHistory[tile.currentX] = {};
+    }
+
+    myImageData = copyCtx.getImageData(tile.currentX, tile.currentY, 1, 1);
+
+    if (!pointilismHistory[tile.currentX][tile.currentY]) {
+      pointilismHistory[tile.currentX][tile.currentY] = myImageData.data;
+    }
+
+    if (Math.abs((pointilismHistory[tile.currentX][tile.currentY][0] + pointilismHistory[tile.currentX][tile.currentY][1] + pointilismHistory[tile.currentX][tile.currentY][2]) - (myImageData.data[0] + myImageData.data[1] + myImageData.data[2])) > 20) {
+      pointilismHistory[tile.currentX][tile.currentY] = myImageData.data;
+    }
+
+
+//    console.log(myImageData.data[0] + "," + myImageData.data[1] + "," + myImageData.data[2])
+
+//    ctx.drawImage(copyCanvasEl, tile.videoX, tile.videoY, TILE_WIDTH*(videoRatio*10), TILE_HEIGHT*(videoRatio*10), -(videoRatio*10)+tile.currentX-TILE_WIDTH/2, -(videoRatio*10)+tile.currentY-TILE_HEIGHT/2, videoWidth, videoHeight)
     //ctx.drawImage(copyCanvasEl, tile.videoX, tile.videoY, TILE_WIDTH*videoRatio, TILE_HEIGHT*videoRatio, -videoRatio+tile.currentX-TILE_WIDTH/2, -videoRatio+tile.currentY-TILE_HEIGHT/2, videoWidth, videoHeight)
 
-    ctx.rotate(tile.rotation * RAD)
+    ctx.beginPath();
+    ctx.fillStyle = "rgb(" + pointilismHistory[tile.currentX][tile.currentY][0] + "," + pointilismHistory[tile.currentX][tile.currentY][1] + "," + pointilismHistory[tile.currentX][tile.currentY][2] + ")";
+//    ctx.fillStyle = "blue";
+    ctx.arc(tile.currentX, tile.currentY, TILE_HEIGHT / 2, 0, Math.PI * 2);
+    ctx.fill();
+
+//    ctx.rotate(tile.rotation * RAD)
 
     // Undo the clipping
-    ctx.restore()
+//    ctx.restore()
   }
 
   function Tiles () {
@@ -265,17 +292,17 @@
 
   function getTilePositioningFn (x, y) {
     return function (tile) {
-      let xdiff = tile.currentX - x
-      let ydiff = tile.currentY - y
-      let dist  = Math.sqrt(xdiff * xdiff + ydiff * ydiff)
+      var xdiff = tile.currentX - x
+      var ydiff = tile.currentY - y
+      var dist  = Math.sqrt(xdiff * xdiff + ydiff * ydiff)
 
-      let randRange = 220 + Math.random() * 30
-      let range = randRange - dist
-      let force = 3 * (range / randRange)
+      var randRange = 220 + Math.random() * 30
+      var range = randRange - dist
+      var force = 3 * (range / randRange)
 
       if (force > tile.force) {
         tile.force = force
-        let radians = Math.atan2(ydiff, xdiff)
+        var radians = Math.atan2(ydiff, xdiff)
         tile.moveX = Math.cos(radians)
         tile.moveY = Math.sin(radians)
         tile.moveRotation = 0.5 - Math.random()
@@ -284,7 +311,7 @@
   }
 
   function getNotificationWithPermissions (msg, next) {
-    let notification
+    var notification
 
     if (!('Notification' in window))
       return next(false)
@@ -306,7 +333,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    const outputEl = document.getElementById('output')
+    var outputEl = document.getElementById('output')
 
     videoEl = document.getElementById('sourcevid')
 
@@ -329,7 +356,7 @@
         videoEl[videoEl.paused ? 'play' : 'pause']()
     })
 
-    const instrEl = document.getElementById('keyboard-event-instructions')
+    var instrEl = document.getElementById('keyboard-event-instructions')
     getNotificationWithPermissions(instrEl.innerText, (success) => {
       !success && instrEl.classList.remove('hide')
     })
