@@ -13,7 +13,7 @@
   let videoWidth
   let videoHeight
   let videoRatio
-  let tileMode = 'rectangles'
+  let currentTileModeName = 'rectangles'
 
   let RAD   = Math.PI / 180
   let tiles = new Tiles()
@@ -22,9 +22,12 @@
     x: 0, y: 0, width: 0, height: 0
   }
 
-  const pointilismHistory = { }
+  const pointilismPixelState = { }
   const Draw = { }
   const Metrics = { }
+  const Cache = { }
+
+  const FRAME_RATE = 23.96 // Roughly NTSC
 
   const TILE_CENTER_WIDTH = 16
   const TILE_CENTER_HEIGHT = 12
@@ -34,7 +37,7 @@
 
 
   function copyImage () {
-    copyCtx.drawImage(videoEl, 0, 0)
+    copyCtx.drawImage(videoEl, 0, 0) // expensive
     drawCtx.clearRect(PAINTRECT.x, PAINTRECT.y, PAINTRECT.width, PAINTRECT.height)
   }
 
@@ -77,10 +80,10 @@
           offset : Object.assign({ }, offset)
         }))
 
-        x += Metrics.current.TILE_WIDTH
+        x += Metrics.currentTileMode.TILE_WIDTH
       }
 
-      y += Metrics.current.TILE_HEIGHT
+      y += Metrics.currentTileMode.TILE_HEIGHT
     }
   }
 
@@ -107,6 +110,14 @@
       pageX : pageX,
       pageY : pageY
     }
+  }
+
+
+  const frameCache = { }
+  function getCurrentFrame () {
+    const key = videoEl.currentTime.toFixed(5)
+    frameCache[key] || (frameCache[key] = Math.floor(videoEl.currentTime.toFixed(5) * FRAME_RATE))
+    return frameCache[key]
   }
 
 
@@ -143,56 +154,67 @@
     this.moveRotation = 0
   }
 
+
+  Tile.prototype.isExpanding = function () {
+    return this.force > 0.0001
+  }
+
+  Tile.prototype.isContracting = function () {
+    return this.rotation !== 0 || this.currentX !== this.originX || this.currentY !== this.originY
+  }
+
+  Tile.prototype.expand = function () {
+    this.moveX *= this.force
+    this.moveY *= this.force
+    this.moveRotation *= this.force
+    this.currentX += this.moveX
+    this.currentY += this.moveY
+    this.rotation += this.moveRotation
+    this.rotation %= 360
+    this.force *= 0.9
+
+    if (this.currentX <= 0 || this.currentX >= PAINTRECT.width)
+      this.moveX *= -1
+
+    if (this.currentY <= 0 || this.currentY >= PAINTRECT.height)
+      this.moveY *= -1
+
+  }
+
+  Tile.prototype.contract = function () {
+    let diffx = (this.originX - this.currentX) * 0.2
+    let diffy = (this.originY - this.currentY) * 0.2
+    let diffRot = (0 - this.rotation) * 0.2
+
+    if (Math.abs(diffx) < 0.5)
+      this.currentX = this.originX
+    else
+      this.currentX += diffx
+
+    if (Math.abs(diffy) < 0.5)
+      this.currentY = this.originY
+    else
+      this.currentY += diffy
+
+    if (Math.abs(diffRot) < 0.5)
+      this.rotation = 0
+    else
+      this.rotation += diffRot
+  }
+
   Tile.prototype.draw = function () {
-    const isExpanding   = this.force > 0.0001
-    const isContracting = this.rotation !== 0 || this.currentX !== this.originX || this.currentY !== this.originY
-    let   isStill
+    let isStill = false
 
-    if (isExpanding) {
-      //expand
-      this.moveX *= this.force
-      this.moveY *= this.force
-      this.moveRotation *= this.force
-      this.currentX += this.moveX
-      this.currentY += this.moveY
-      this.rotation += this.moveRotation
-      this.rotation %= 360
-      this.force *= 0.9
-
-      if (this.currentX <= 0 || this.currentX >= PAINTRECT.width)
-        this.moveX *= -1
-
-      if (this.currentY <= 0 || this.currentY >= PAINTRECT.height)
-        this.moveY *= -1
-
-    } else if (isContracting) {
-      //contract
-      let diffx = (this.originX - this.currentX) * 0.2
-      let diffy = (this.originY - this.currentY) * 0.2
-      let diffRot = (0 - this.rotation) * 0.2
-
-      if (Math.abs(diffx) < 0.5)
-        this.currentX = this.originX
-      else
-        this.currentX += diffx
-
-      if (Math.abs(diffy) < 0.5)
-        this.currentY = this.originY
-      else
-        this.currentY += diffy
-
-      if (Math.abs(diffRot) < 0.5)
-        this.rotation = 0
-      else
-        this.rotation += diffRot
-
-    } else {
+    if (this.isExpanding())
+      this.expand()
+    else if (this.isContracting())
+      this.contract()
+    else {
       this.force = 0
       isStill = true
     }
 
-    Metrics.current = Metrics[tileMode]
-    Draw[tileMode](this, drawCtx, !isStill)
+    Draw[currentTileModeName](this, drawCtx, !isStill)
   }
 
   const SHADOW_DIVISOR = 70
@@ -218,6 +240,7 @@
   }
 
   Metrics.rectangles = {
+    NAME   : 'rectangles',
     TILE_WIDTH  : 30,
     TILE_HEIGHT : 18,
     FRAME_PROCESSING_INTERVAL : 24
@@ -232,24 +255,26 @@
     ctx.drawImage(
       copyCanvasEl,
       tile.videoX, tile.videoY,
-      Metrics.current.TILE_WIDTH, Metrics.current.TILE_HEIGHT,
+      Metrics.currentTileMode.TILE_WIDTH, Metrics.currentTileMode.TILE_HEIGHT,
       -TILE_CENTER_WIDTH, -TILE_CENTER_HEIGHT,
-      Metrics.current.TILE_WIDTH, Metrics.current.TILE_HEIGHT
+      Metrics.currentTileMode.TILE_WIDTH, Metrics.currentTileMode.TILE_HEIGHT
     )
     ctx.restore()
   }
 
 
-  Metrics.ellipses = Object.assign({ }, Metrics.rectangles)
+  Metrics.ellipses = Object.assign({
+    NAME : 'ellipses'
+  }, Metrics.rectangles)
   Draw.ellipses = function (tile, ctx) {
     ctx.save()
 
     // Create a circle to draw an image into
     ctx.beginPath()
-    addArc(tile, ctx, Metrics.current.TILE_HEIGHT)
+    addArc(tile, ctx, Metrics.currentTileMode.TILE_HEIGHT)
     ctx.clip()
 
-    ctx.drawImage(copyCanvasEl, tile.videoX, tile.videoY, Metrics.current.TILE_WIDTH*(videoRatio*10), Metrics.current.TILE_HEIGHT*(videoRatio*10), -(videoRatio*10)+tile.currentX-Metrics.current.TILE_WIDTH/2, -(videoRatio*10)+tile.currentY-Metrics.current.TILE_HEIGHT/2, videoWidth, videoHeight)
+    ctx.drawImage(copyCanvasEl, tile.videoX, tile.videoY, Metrics.currentTileMode.TILE_WIDTH*(videoRatio*10), Metrics.currentTileMode.TILE_HEIGHT*(videoRatio*10), -(videoRatio*10)+tile.currentX-Metrics.currentTileMode.TILE_WIDTH/2, -(videoRatio*10)+tile.currentY-Metrics.currentTileMode.TILE_HEIGHT/2, videoWidth, videoHeight)
 
     ctx.rotate(tile.rotation * RAD)
 
@@ -257,29 +282,45 @@
     ctx.restore()
   }
 
+  function getPixel (tile, ctx) {
+    return ctx.getImageData(tile.videoX, tile.videoY, 1, 1).data // expensive
+  }
+
+  Cache.pointillism = { }
   Metrics.pointillism = Object.assign({ }, Metrics.rectangles, {
+    NAME : 'pointillism',
     FRAME_PROCESSING_INTERVAL : 2
   })
   Draw.pointillism = function (tile, ctx) {
     ctx.save()
 
-    if (!pointilismHistory[tile.currentX])
-      pointilismHistory[tile.currentX] = {}
+    pointilismPixelState[tile.currentX] ||
+      (pointilismPixelState[tile.currentX] = { })
 
-    const imageData = copyCtx.getImageData(tile.videoX, tile.videoY, 1, 1)
+    const currentFrame = getCurrentFrame()
 
-    if (!pointilismHistory[tile.currentX][tile.currentY])
-      pointilismHistory[tile.currentX][tile.currentY] = imageData.data
+    Cache.pointillism[currentFrame] ||
+      (Cache.pointillism[currentFrame] = { })
+    Cache.pointillism[currentFrame][tile.currentX] ||
+      (Cache.pointillism[currentFrame][tile.currentX] = { })
 
-    if (Math.abs(pointilismHistory[tile.currentX][tile.currentY][0] + pointilismHistory[tile.currentX][tile.currentY][1] + pointilismHistory[tile.currentX][tile.currentY][2] - (imageData.data[0] + imageData.data[1] + imageData.data[2])) > 20)
-      pointilismHistory[tile.currentX][tile.currentY] = imageData.data
+    const currentPixel = Cache.pointillism[currentFrame][tile.currentX][tile.currentY] || (Cache.pointillism[currentFrame][tile.currentX][tile.currentY] = getPixel(tile, copyCtx))
+
+    pointilismPixelState[tile.currentX][tile.currentY] ||
+      (pointilismPixelState[tile.currentX][tile.currentY] = currentPixel)
+
+    let pixel = pointilismPixelState[tile.currentX][tile.currentY]
+
+    if (Math.abs(pixel[0] + pixel[1] + pixel[2] - (currentPixel[0] + currentPixel[1] + currentPixel[2])) > 20) {
+      pointilismPixelState[tile.currentX][tile.currentY] = currentPixel
+      pixel = currentPixel
+    }
 
     ctx.beginPath()
 
-    const pixel = pointilismHistory[tile.currentX][tile.currentY]
     ctx.fillStyle = rgb(pixel[0], pixel[1], pixel[2])
 
-    addArc(tile, ctx, Metrics.current.TILE_HEIGHT/2)
+    addArc(tile, ctx, Metrics.currentTileMode.TILE_HEIGHT/2)
 
     ctx.fill()
   }
@@ -352,8 +393,14 @@
   }
 
   function updateTileMode () {
-    const tileModeFromLocation = location.hash.replace('#', '')
-    tileMode = tileModeFromLocation || tileMode
+    const currentTileModeNameFromLocation = location.hash.replace('#', '')
+    currentTileModeName = currentTileModeNameFromLocation || currentTileModeName
+
+    const tileModeUnInitialized = !Metrics.currentTileMode
+    const tileModeOutOfSync = tileModeUnInitialized ? true : Metrics.currentTileMode.NAME !== currentTileModeName
+
+    if (tileModeUnInitialized || tileModeOutOfSync)
+      Metrics.currentTileMode = Metrics[currentTileModeName]
   }
 
   document.addEventListener('DOMContentLoaded', function () {
@@ -368,8 +415,8 @@
     })
     drawCtx = outputEl.getContext('2d')
 
-    Metrics.current = Metrics[tileMode]
-    setInterval(processFrame, Metrics.current.FRAME_PROCESSING_INTERVAL)
+    updateTileMode()
+    setInterval(processFrame, Metrics.currentTileMode.FRAME_PROCESSING_INTERVAL)
 
     outputEl.addEventListener('mousedown', dropBomb)
     outputEl.addEventListener('touchend' , dropBomb)
@@ -387,8 +434,6 @@
     })
 
     window.addEventListener('hashchange', updateTileMode)
-
-    updateTileMode()
   })
 
 })()
