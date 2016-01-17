@@ -1,24 +1,20 @@
-'use strict';
-
 // Based on http://craftymind.com/factory/html5video/CanvasVideo.html
 
 
 (function () {
-  'use strict';
+  var videoEl
+  var copyCtx
+  var copyCanvasEl
+  var drawCtx
+  var videoWidth
+  var videoHeight
+  var videoRatio
+  var currentTileModeName = 'rectangles'
 
-  let videoEl
-  let copyCtx
-  let copyCanvasEl
-  let drawCtx
-  let videoWidth
-  let videoHeight
-  let videoRatio
-  let currentTileModeName = 'rectangles'
+  var RAD   = Math.PI / 180
+  var tiles = new Tiles()
 
-  let RAD   = Math.PI / 180
-  let tiles = new Tiles()
-
-  let sourceRect = {
+  var sourceRect = {
     x: 0, y: 0, width: 0, height: 0
   }
 
@@ -63,14 +59,14 @@
 
 
   function createTiles () {
-    let offset = {
+    var offset = {
       x : TILE_CENTER_WIDTH + (PAINTRECT.width - sourceRect.width) / 2,
       y : TILE_CENTER_HEIGHT + (PAINTRECT.height - sourceRect.height) / 2
     }
-    let y = 0
+    var y = 0
 
     while (y < sourceRect.height) {
-      let x = 0
+      var x = 0
 
       while (x < sourceRect.width) {
         tiles.push(new Tile({
@@ -96,8 +92,8 @@
 
 
   function pageCoordinatesFromEvent (e) {
-    let pageX = 0
-    let pageY = 0
+    var pageX = 0
+    var pageY = 0
 
     if (e.pageX || e.pageY)
       return e
@@ -122,23 +118,25 @@
 
 
   function dropBomb (evt) {
-    let e = evt || window.event
-    let el = e.currentTarget
+    var e = evt || window.event
+    var el = e.currentTarget
 
-    let coords = pageCoordinatesFromEvent(e)
+    var coords = pageCoordinatesFromEvent(e)
 
     explode(coords.pageX - el.offsetLeft, coords.pageY - el.offsetTop)
   }
 
 
-  function Tile (options = {
-    video: {
-      x : 0, y : 0
-    },
-    offset : {
-      x : 0, y : 0
-    }
-  }) {
+  function Tile (options) {
+    options = Object.assign({ }, {
+      video: {
+        x : 0, y : 0
+      },
+      offset : {
+        x : 0, y : 0
+      }
+    }, options)
+
     this.videoX   = options.video.x
     this.videoY   = options.video.y
     this.originX  = options.offset.x + options.video.x
@@ -182,9 +180,9 @@
   }
 
   Tile.prototype.contract = function () {
-    let diffx = (this.originX - this.currentX) * 0.2
-    let diffy = (this.originY - this.currentY) * 0.2
-    let diffRot = (0 - this.rotation) * 0.2
+    var diffx = (this.originX - this.currentX) * 0.2
+    var diffy = (this.originY - this.currentY) * 0.2
+    var diffRot = (0 - this.rotation) * 0.2
 
     if (Math.abs(diffx) < 0.5)
       this.currentX = this.originX
@@ -203,7 +201,7 @@
   }
 
   Tile.prototype.draw = function () {
-    let isStill = false
+    var isStill = false
 
     if (this.isExpanding())
       this.expand()
@@ -271,11 +269,15 @@
 
     // Create a circle to draw an image into
     ctx.beginPath()
-    addArc(tile, ctx, Metrics.currentTileMode.TILE_HEIGHT)
+    addArc(tile, ctx, Metrics.currentTileMode.TILE_HEIGHT/2)
     ctx.clip()
 
-    ctx.drawImage(copyCanvasEl, tile.videoX, tile.videoY, Metrics.currentTileMode.TILE_WIDTH*(videoRatio*10), Metrics.currentTileMode.TILE_HEIGHT*(videoRatio*10), -(videoRatio*10)+tile.currentX-Metrics.currentTileMode.TILE_WIDTH/2, -(videoRatio*10)+tile.currentY-Metrics.currentTileMode.TILE_HEIGHT/2, videoWidth, videoHeight)
 
+    const swidth = Math.max(1, Math.floor(Metrics.currentTileMode.TILE_WIDTH*(videoRatio*10)-tile.videoX))
+    const sheight = Math.max(1, Math.floor(Metrics.currentTileMode.TILE_HEIGHT*(videoRatio*10)-tile.videoY))
+    const dx = Math.max(1, Math.floor(-(videoRatio*10)+tile.currentX-Metrics.currentTileMode.TILE_WIDTH/2))
+    const dy = Math.max(1, Math.floor(-(videoRatio*10)+tile.currentY-Metrics.currentTileMode.TILE_HEIGHT/2))
+    ctx.drawImage(copyCanvasEl, tile.videoX, tile.videoY, swidth, sheight, dx, dy, videoWidth, videoHeight)
     ctx.rotate(tile.rotation * RAD)
 
     // Undo the clipping
@@ -309,7 +311,7 @@
     pointilismPixelState[tile.currentX][tile.currentY] ||
       (pointilismPixelState[tile.currentX][tile.currentY] = currentPixel)
 
-    let pixel = pointilismPixelState[tile.currentX][tile.currentY]
+    var pixel = pointilismPixelState[tile.currentX][tile.currentY]
 
     if (Math.abs(pixel[0] + pixel[1] + pixel[2] - (currentPixel[0] + currentPixel[1] + currentPixel[2])) > 20) {
       pointilismPixelState[tile.currentX][tile.currentY] = currentPixel
@@ -345,7 +347,7 @@
   }
 
   Tiles.prototype.drawEach = function () {
-    return this.array.forEach(tile => tile.draw())
+    return this.array.forEach(function (tile) {  tile.draw() })
   }
 
 
@@ -356,17 +358,17 @@
 
   function getTilePositioningFn (x, y) {
     return function (tile) {
-      let xdiff = tile.currentX - x
-      let ydiff = tile.currentY - y
-      let dist  = Math.sqrt(xdiff * xdiff + ydiff * ydiff)
+      var xdiff = tile.currentX - x
+      var ydiff = tile.currentY - y
+      var dist  = Math.sqrt(xdiff * xdiff + ydiff * ydiff)
 
-      let randRange = 220 + Math.random() * 30
-      let range = randRange - dist
-      let force = 3 * (range / randRange)
+      var randRange = 220 + Math.random() * 30
+      var range = randRange - dist
+      var force = 3 * (range / randRange)
 
       if (force > tile.force) {
         tile.force = force
-        let radians = Math.atan2(ydiff, xdiff)
+        var radians = Math.atan2(ydiff, xdiff)
         tile.moveX = Math.cos(radians)
         tile.moveY = Math.sin(radians)
         tile.moveRotation = 0.5 - Math.random()
@@ -375,7 +377,7 @@
   }
 
   function getNotificationWithPermissions (msg, next) {
-    let notification
+    var notification
 
     if (!('Notification' in window))
       return next(false)
@@ -429,7 +431,7 @@
     })
 
     const instrEl = document.getElementById('keyboard-event-instructions')
-    getNotificationWithPermissions(instrEl.innerText, (success) => {
+    getNotificationWithPermissions(instrEl.innerText, function (success) {
       !success && instrEl.classList.remove('hide')
     })
 
