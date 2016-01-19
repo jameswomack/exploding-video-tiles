@@ -12,11 +12,20 @@
     p or spacebar = play|pause toggler
   </section>
 
-  <section id="tile-mode-controls">
-    <p><a href="#ellipses">Ellipses</a></p>
-    <p><a href="#pointillism">Pointillism</a></p>
-    <p><a href="#rectangles">Rectangles</a></p>
-  </section>
+  <datalist id="tile-mode-list">
+    <option value="ellipses">
+    <option value="pointillism">
+    <option value="rectangles">
+  </datalist>
+
+  <form id="draw-settings">
+    <label for="NAME"><input name="NAME" value="rectangles" list="tile-mode-list" /></label>
+    <label for="TILE_WIDTH"><input name="TILE_WIDTH" value="30" /></label>
+    <label for="TILE_HEIGHT"><input name="TILE_HEIGHT" value="18" /></label>
+    <label for="FRAME_PROCESSING_INTERVAL"><input name="FRAME_PROCESSING_INTERVAL" value="24" /></label>
+    <label for="TILE_CENTER_WIDTH"><input name="TILE_CENTER_WIDTH" value="24" /></label>
+    <label for="TILE_CENTER_HEIGHT"><input name="TILE_CENTER_HEIGHT" value="18" /></label>
+  </form>
 
 	<section id="original-video-container" class="hide">
 		<video id="sourcevid" autoplay="true" loop="true">

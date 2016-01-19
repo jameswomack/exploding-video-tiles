@@ -2,16 +2,9 @@
 
 
 (function () {
-  var videoEl
-  var copyCtx
-  var copyCanvasEl
-  var drawCtx
-  var videoWidth
-  var videoHeight
-  var videoRatio
-  var currentTileModeName = 'rectangles'
+  var videoEl, copyCtx, copyCanvasEl, drawCtx, videoWidth, videoHeight,
+      videoRatio, currentTileModeName = 'rectangles', RAD = Math.PI / 180
 
-  var RAD   = Math.PI / 180
   var tiles = new Tiles()
 
   var sourceRect = {
@@ -22,15 +15,13 @@
   const Draw = { }
   const Metrics = { }
   const Cache = { }
+  var tick = null
 
   const FRAME_RATE = 23.96 // Roughly NTSC
 
-  const TILE_CENTER_WIDTH = 16
-  const TILE_CENTER_HEIGHT = 12
   const PAINTRECT = {
-    x: 0, y: 0, width: 1000, height: 600
+    x: 0, y: 0, width: 0, height: 0
   }
-
 
   function copyImage () {
     copyCtx.drawImage(videoEl, 0, 0) // expensive
@@ -60,8 +51,8 @@
 
   function createTiles () {
     var offset = {
-      x : TILE_CENTER_WIDTH + (PAINTRECT.width - sourceRect.width) / 2,
-      y : TILE_CENTER_HEIGHT + (PAINTRECT.height - sourceRect.height) / 2
+      x : Math.floor(Metrics.currentTileMode.TILE_CENTER_WIDTH + (PAINTRECT.width - sourceRect.width) / 2),
+      y : Math.floor(Metrics.currentTileMode.TILE_CENTER_HEIGHT + (PAINTRECT.height - sourceRect.height) / 2)
     }
     var y = 0
 
@@ -237,11 +228,14 @@
     ctx.arc(tile.currentX, tile.currentY, radius, 0, Math.PI * 2, false)
   }
 
+  // TODO - add a factor parameter that changes based on moveX|Y
   Metrics.rectangles = {
     NAME   : 'rectangles',
     TILE_WIDTH  : 30,
     TILE_HEIGHT : 18,
-    FRAME_PROCESSING_INTERVAL : 24
+    FRAME_PROCESSING_INTERVAL : 24,
+    TILE_CENTER_WIDTH : 16,
+    TILE_CENTER_HEIGHT : 12
   }
   Draw.rectangles = function (tile, ctx, shouldAddShadow) {
     ctx.save()
@@ -254,7 +248,7 @@
       copyCanvasEl,
       tile.videoX, tile.videoY,
       Metrics.currentTileMode.TILE_WIDTH, Metrics.currentTileMode.TILE_HEIGHT,
-      -TILE_CENTER_WIDTH, -TILE_CENTER_HEIGHT,
+      -Metrics.currentTileMode.TILE_CENTER_WIDTH, -Metrics.currentTileMode.TILE_CENTER_HEIGHT,
       Metrics.currentTileMode.TILE_WIDTH, Metrics.currentTileMode.TILE_HEIGHT
     )
     ctx.restore()
@@ -271,7 +265,6 @@
     ctx.beginPath()
     addArc(tile, ctx, Metrics.currentTileMode.TILE_HEIGHT/2)
     ctx.clip()
-
 
     const swidth = Math.max(1, Math.floor(Metrics.currentTileMode.TILE_WIDTH*(videoRatio*10)-tile.videoX))
     const sheight = Math.max(1, Math.floor(Metrics.currentTileMode.TILE_HEIGHT*(videoRatio*10)-tile.videoY))
@@ -401,12 +394,23 @@
     const tileModeUnInitialized = !Metrics.currentTileMode
     const tileModeOutOfSync = tileModeUnInitialized ? true : Metrics.currentTileMode.NAME !== currentTileModeName
 
-    if (tileModeUnInitialized || tileModeOutOfSync)
-      Metrics.currentTileMode = Metrics[currentTileModeName]
+    if (tileModeUnInitialized || tileModeOutOfSync) {
+      Metrics.currentTileMode = Object.assign({ }, Metrics[currentTileModeName])
+      Object.keys(Metrics.currentTileMode).forEach(function (k) {
+        document.querySelector('input[name="'+k+'"]').value = Metrics[currentTileModeName][k]
+      })
+    }
+  }
+
+  function updateTick () {
+    tick && clearInterval(tick)
+    tick = setInterval(processFrame, Metrics.currentTileMode.FRAME_PROCESSING_INTERVAL)
   }
 
   document.addEventListener('DOMContentLoaded', function () {
     const outputEl = document.getElementById('output')
+    PAINTRECT.width  = outputEl.clientWidth
+    PAINTRECT.height = outputEl.clientHeight
 
     videoEl = document.getElementById('sourcevid')
 
@@ -418,10 +422,28 @@
     drawCtx = outputEl.getContext('2d')
 
     updateTileMode()
-    setInterval(processFrame, Metrics.currentTileMode.FRAME_PROCESSING_INTERVAL)
+    updateTick()
 
     outputEl.addEventListener('mousedown', dropBomb)
     outputEl.addEventListener('touchend' , dropBomb)
+
+    var inputs =
+      document
+        .querySelector('form')
+        .querySelectorAll('input')
+
+    const onchange = function (e) {
+      const el = e.currentTarget
+      Metrics.currentTileMode[el.name] = Number(el.value)
+      el.name === 'FRAME_PROCESSING_INTERVAL' && updateTick()
+      el.name === 'NAME' && (location.hash = '#' + el.value)
+    }
+
+    for (var i=0; i < inputs.length; i++) {
+      var inputEl = inputs[i]
+      inputEl.onchange = onchange
+      inputEl.keydown  = onchange
+    }
 
     document.addEventListener('keypress', function (keyboardEvent) {
       if (keyboardEvent.code in { KeyP: 112, Space: 32 } &&

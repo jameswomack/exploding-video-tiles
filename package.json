@@ -1,0 +1,31 @@
+{
+  "name": "exploding-video-tiles",
+  "version": "1.0.0",
+  "description": "A Chrome Canary <canvas> experiment with <video>. Contains togglable rectangular & elliptical explosion effects. Notification API example also included. ",
+  "main": "js/index.js",
+  "devDependencies": {
+    "http-server": "0.8.5"
+  },
+  "scripts": {
+    "start": "http-server",
+    "test": "tape"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jameswomack/exploding-video-tiles.git"
+  },
+  "keywords": [
+    "cutting-edge",
+    "es6",
+    "canvas",
+    "touch",
+    "universal",
+    "mobile"
+  ],
+  "author": "James J. Womack <james@womack.io>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jameswomack/exploding-video-tiles/issues"
+  },
+  "homepage": "https://github.com/jameswomack/exploding-video-tiles#readme"
+}

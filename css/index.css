@@ -21,3 +21,12 @@
 	width: 1000px;
 	height: 600px;
 }
+
+label {
+  clear: both;
+  display: flex;
+}
+
+label:before {
+  content: attr(for) ": ";
+}
