@@ -9,7 +9,7 @@
   "esnext": true,
   "excludeFiles": [],
   "requireCapitalizedConstructors": true,
-  "requireCurlyBraces": ["for", "while", "do", "try", "catch"],
+  "requireCurlyBraces": ["while", "do", "try", "catch"],
   "requireDotNotation": true,
   "requireMatchingFunctionName": true,
   "requirePaddingNewLinesAfterBlocks": true,
