@@ -447,7 +447,8 @@
 
     videoEl.addEventListener('pause', function () {
       const hslValues = hslValuesFromContext(copyCtx)
-      console.info(hslValues)
+      console.info(hslValues);
+      analyzeColors(hslValues);
     })
 
     document.addEventListener('keypress', function (keyboardEvent) {

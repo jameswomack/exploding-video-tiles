@@ -30,10 +30,14 @@
         } else {
             d.group = "red";
         }
+
+        return d;
     })
 
     var colorGroups = d3.nest()
         .key(function(d){ return d.group; })
-        .entries(hslArray)
+        .entries(hslArray);
+
+    console.log(colorGroups)
 
   }
