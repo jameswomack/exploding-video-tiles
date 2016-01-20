@@ -484,7 +484,7 @@
     var max = Math.max(r, g, b), min = Math.min(r, g, b);
     var h, s, l = (max + min) / 2;
 
-    if (max === min)
+    if (max == min)
       h = s = 0; // achromatic
     else {
       var d = max - min;
@@ -501,23 +501,23 @@
       h /= 6;
     }
 
-    return { h: h, s: s, l: l };
+    return { h: h * 360, s: s * 100, l: l * 100 };
   }
 
   function hslValuesFromContext (ctx) {
-    const imageCanvas = ctx.canvas;
-    const imageData   = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
+    var imageCanvas = ctx.canvas;
+    var imageData   = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
 
-    const hslValues = [ ]
+    var hslValues = [ ]
 
     for (var x = 0; x < imageData.width; ++x)
       for (var y = 0; y < imageData.height; ++y) {
-        const index = (x + y * imageData.width) * 4
+        var index = (x + y * imageData.width) * 4
 
-        const r = imageData.data[index + 0]
-        const g = imageData.data[index + 1]
-        const b = imageData.data[index + 2]
-        const hsl = rgbToHsl(r, g, b)
+        var r = imageData.data[index + 0]
+        var g = imageData.data[index + 1]
+        var b = imageData.data[index + 2]
+        var hsl = rgbToHsl(r, g, b)
 
         hslValues.push(hsl)
       }
