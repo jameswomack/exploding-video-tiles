@@ -30,3 +30,8 @@ label {
 label:before {
   content: attr(for) ": ";
 }
+
+#color-analysis svg {
+    background: grey;
+    margin-bottom: 30px;
+}
