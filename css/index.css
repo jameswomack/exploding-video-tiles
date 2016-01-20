@@ -32,6 +32,6 @@ label:before {
 }
 
 #color-analysis svg {
-    background: grey;
     margin-bottom: 30px;
+    display: block;
 }

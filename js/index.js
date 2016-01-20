@@ -447,7 +447,6 @@
 
     videoEl.addEventListener('pause', function () {
       const hslValues = hslValuesFromContext(copyCtx)
-      console.info(hslValues);
       analyzeColors(hslValues);
     })
 
