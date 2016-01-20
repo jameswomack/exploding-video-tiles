@@ -446,7 +446,7 @@
     }
 
     document.addEventListener('keypress', function (keyboardEvent) {
-      if (keyboardEvent.code in { KeyP: 112, Space: 32 } &&
+      if ((keyboardEvent.keyCode === 112 || keyboardEvent.keyCode === 32) &&
           !keyboardEvent.shiftKey && !keyboardEvent.metaKey &&
           !keyboardEvent.altKey   && !keyboardEvent.ctrlKey)
         videoEl[videoEl.paused ? 'play' : 'pause']()
