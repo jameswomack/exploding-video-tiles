@@ -446,8 +446,11 @@
     }
 
     videoEl.addEventListener('pause', function () {
-      const hslValues = hslValuesFromContext(copyCtx)
-      analyzeColors(hslValues);
+
+      const hslValues = hslToColor(hslValuesFromContext(copyCtx));
+      colorMap('#color-analysis svg#colorMap', hslValues);
+      hueBar('#color-analysis svg#hueBar', hslValues);
+      // hueLightScatter('#color-analysis svg#hueScatter', hslValues);
     })
 
     document.addEventListener('keypress', function (keyboardEvent) {

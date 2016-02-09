@@ -19,7 +19,7 @@
 
 #exploded-tile-container {
 	width: 1000px;
-	height: 600px;
+	height: 500px;
 }
 
 label {
@@ -34,4 +34,26 @@ label:before {
 #color-analysis svg {
     margin-bottom: 30px;
     display: block;
+}
+
+#color-analysis svg .axis {
+  fill: white;
+}
+
+#color-analysis svg .axis path{
+  stroke-width: 1px;
+  stroke: white;
+  fill: none;
+}
+
+#color-analysis svg#colorMap rect {
+ /* stroke: white;
+  stroke-width: 1px;*/
+  fill: grey;
+}
+
+#color-analysis svg#colorMap rect.highlight {
+ /* stroke: white;
+  stroke-width: 1px;*/
+  fill: white;
 }

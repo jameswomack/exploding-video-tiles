@@ -3,7 +3,8 @@
 <head>
 	<title>Exploding Video Tiles</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.12/d3.min.js"></script>
+<!--   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.12/d3.min.js"></script> -->
+  <script type="text/javascript" src="js/d3.min.js"></script>
   <script type="text/javascript" src="js/analyzeColors.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/index.css" />
@@ -38,11 +39,13 @@
 	</section>
 
 	<section id="exploded-tile-container" class="center">
-		<canvas id="output" width="1000" height="600"></canvas>
+		<canvas id="output" width="1000" height="500"></canvas>
 	</section>
 
   <section id="color-analysis" class="center">
-    <svg class="center"></svg>
+    <svg id="colorMap" class="center"></svg>
+    <svg id="hueBar" class="center"></svg>
+    <svg id="hueScatter" class="center"></svg>
   </section>
 
 </body>
