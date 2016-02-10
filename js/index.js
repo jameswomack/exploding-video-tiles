@@ -445,13 +445,23 @@
       inputEl.keydown  = onchange
     }
 
-    videoEl.addEventListener('pause', function () {
-
-      const hslValues = hslToColor(hslValuesFromContext(copyCtx));
-      colorMap('#color-analysis svg#colorMap', hslValues);
-      hueBar('#color-analysis svg#hueBar', hslValues);
-      // hueLightScatter('#color-analysis svg#hueScatter', hslValues);
+    var worker = new Worker('js/worker.js');
+    worker.addEventListener('message', function (e) {
+      const hslValues = e.data.result;
+      window.colorMap('#color-analysis svg#colorMap', hslValues);
+      window.hueBar('#color-analysis svg#hueBar', hslValues);
+      console.log('Message received from worker');
     })
+
+    setInterval(function () {
+      var imageCanvas = copyCtx.canvas;
+
+      var b = copyCtx.getImageData(200, 200, imageCanvas.width/4, imageCanvas.height/4);
+
+      worker.postMessage({
+        image : b
+      })
+    }, 1000)
 
     document.addEventListener('keypress', function (keyboardEvent) {
       if ((keyboardEvent.keyCode === 112 || keyboardEvent.keyCode === 32) &&
@@ -467,66 +477,5 @@
 
     window.addEventListener('hashchange', updateTileMode)
   })
-
-  function bound01 (n, max) {
-    n = Math.min(max, Math.max(0, parseFloat(n)))
-
-    // Handle floating point rounding errors
-    if (Math.abs(n - max) < 0.000001)
-      return 1
-    else
-      // Convert into [0, 1] range if it isn't already
-      return n % max / parseFloat(max)
-  }
-
-  function rgbToHsl(r, g, b) {
-    r = bound01(r, 255);
-    g = bound01(g, 255);
-    b = bound01(b, 255);
-
-    var max = Math.max(r, g, b), min = Math.min(r, g, b);
-    var h, s, l = (max + min) / 2;
-
-    if (max == min)
-      h = s = 0; // achromatic
-    else {
-      var d = max - min;
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-
-      switch (max) {
-        case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-
-        case g: h = (b - r) / d + 2; break;
-
-        case b: h = (r - g) / d + 4; break;
-      }
-
-      h /= 6;
-    }
-
-    return { h: h * 360, s: s * 100, l: l * 100 };
-  }
-
-  function hslValuesFromContext (ctx) {
-    var imageCanvas = ctx.canvas;
-    var imageData   = ctx.getImageData(0, 0, imageCanvas.width, imageCanvas.height);
-
-    var hslValues = [ ]
-
-    for (var x = 0; x < imageData.width; ++x)
-      for (var y = 0; y < imageData.height; ++y) {
-        var index = (x + y * imageData.width) * 4
-
-        var r = imageData.data[index + 0]
-        var g = imageData.data[index + 1]
-        var b = imageData.data[index + 2]
-        var hsl = rgbToHsl(r, g, b)
-
-        hslValues.push(hsl)
-      }
-
-    return hslValues
-  }
-
 
 })()
