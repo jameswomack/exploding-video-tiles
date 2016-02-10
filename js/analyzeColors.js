@@ -215,8 +215,6 @@
       .attr("width", 1200)
       .style("background", "white");
 
-    console.log(data);
-
     var hScale = function(d) {return Math.round(d / 15)};
 
     var oScale = function(d) {return Math.round(d / 10)};
@@ -261,31 +259,33 @@
 
     var nestedData = d3.nest()
       .key(d => d.group)
-//      .key(d => "all")
       .key(d => d.rl)
-//      .key(d => d.rs)
-//      .key(d => d.rh)
       .entries(newData);
-
-      console.log("nestedData", nestedData)
 
       var packedData = [];
 
 
       var max = d3.max(nestedData.map(d => d3.sum(d.values.map(p => d3.sum(p.values.map(q => q.value))))))
+      var colorAuthority = ["red","orange","yellow","green","cyan","blue","purple","magenta","red"]
 
-      nestedData.forEach(d => {
-        var total = d3.sum(d.values.map(p => d3.sum(p.values.map(q => q.value))))
-        var packSize = total / max * 400;
-        packSize = 400
+      colorAuthority.forEach(authColor => {
+        var d = nestedData.filter(p => p.key === authColor)[0];
+        if (d) {
+          var total = d3.sum(d.values.map(p => d3.sum(p.values.map(q => q.value))))
+          var packSize = total / max * 400;
+          packSize = 400
 
-      packChart = d3.layout.pack();
-      packChart.size([packSize,packSize])
-        .children(function(d) {return d.values})
-        .value(function(d) {return d.value});
+          packChart = d3.layout.pack();
+          packChart.size([packSize,packSize])
+            .children(function(d) {return d.values})
+            .value(function(d) {return d.value});
 
-        var thisPackedColor = packChart(d);
-        packedData.push(thisPackedColor);
+          var thisPackedColor = packChart(d);
+          packedData.push(thisPackedColor);
+        }
+        else {
+          packedData.push([]);
+        }
       })
 
       packedData.forEach((packedColor, packedIndex) => {
@@ -293,29 +293,29 @@
         packedColor = packedColor.filter(d => d.depth === 2)
 
         d3.select(selectionID)
-        .selectAll("g." + nestedData[packedIndex].key)
+        .selectAll("g." + colorAuthority[packedIndex])
         .data([0])
         .enter()
         .append("g")
-        .attr("class", nestedData[packedIndex].key)
+        .attr("class", colorAuthority[packedIndex])
         .attr("transform", "translate(" + ((packedIndex%3 * 400)) + "," + ((Math.floor(packedIndex/3) * 400) + 1200) + ")")
         .append("text")
         .attr("y", 20)
         .attr("x", 200)
-        .text(nestedData[packedIndex].key)
+        .style("font-size", "20px")
+        .style("text-anchor", "middle")
+        .text(colorAuthority[packedIndex])
 
-        var packG = d3.select(selectionID).select("g." + nestedData[packedIndex].key);
+        var packG = d3.select(selectionID).select("g." + colorAuthority[packedIndex]);
 
         packG
         .selectAll("circle")
-  //      .data(noLeaf, d => d.key + "-" + d.parent.key + "-" + d.parent.parent.key)
         .data(packedColor, d => d.key)
         .enter()
         .append("circle")
         .attr("r", 1)
         .attr("cx", function(d) {return d.x})
         .attr("cy", function(d) {return d.y})
-  //      .style("fill", fillCircle)
         .style("fill", fillCircle2Level)
         .style("stroke", "black")
 
@@ -326,22 +326,10 @@
         .attr("r", function(d) {return d.r})
         .attr("cx", function(d) {return d.x})
         .attr("cy", function(d) {return d.y})
-  //      .style("fill", fillCircle)
         .style("fill", fillCircle2Level)
-  /*      .transition()
-        .delay(1000)
-        .duration(2000)
-        .attr("cx", function (d,i) {return i%30 * 30})
-        .attr("cy", function (d,i) {return Math.floor(i/30) * 30})
-
-        grid by size
-        grid by color
-
-        */
 
         packG
         .selectAll("circle")
-  //        .data(noLeaf, d => d.key + "-" + d.parent.key + "-" + d.parent.parent.key)
           .data(packedColor, d => d.key)
           .exit()
           .transition()
@@ -360,27 +348,30 @@
 
       var circleData = packChart({key: "root", values: nestedData}).filter(d => d.depth === 3);
 
-      console.log("circleData", circleData)
-
       d3.select(selectionID)
       .selectAll("g.overall")
       .data([0])
       .enter()
       .append("g")
-      .attr("class", "overall");
+      .attr("class", "overall")
+      .append("line")
+      .style("stroke", "gray")
+      .style("stroke-width", "1px")
+      .attr("x1", 0)
+      .attr("x2", 1200)
+      .attr("y1", 1200)
+      .attr("y2", 1200);
 
       packG = d3.select(selectionID).select("g.overall");
 
       packG
       .selectAll("circle")
-//      .data(noLeaf, d => d.key + "-" + d.parent.key + "-" + d.parent.parent.key)
       .data(circleData, d => d.key)
       .enter()
       .append("circle")
       .attr("r", 1)
       .attr("cx", function(d) {return d.x})
       .attr("cy", function(d) {return d.y})
-//      .style("fill", fillCircle)
       .style("fill", fillCircle2Level)
       .style("stroke", "black")
 
@@ -391,22 +382,10 @@
       .attr("r", function(d) {return d.r})
       .attr("cx", function(d) {return d.x})
       .attr("cy", function(d) {return d.y})
-//      .style("fill", fillCircle)
       .style("fill", fillCircle2Level)
-/*      .transition()
-      .delay(1000)
-      .duration(2000)
-      .attr("cx", function (d,i) {return i%30 * 30})
-      .attr("cy", function (d,i) {return Math.floor(i/30) * 30})
-
-      grid by size
-      grid by color
-
-      */
 
       packG
       .selectAll("circle")
-//        .data(noLeaf, d => d.key + "-" + d.parent.key + "-" + d.parent.parent.key)
         .data(circleData, d => d.key)
         .exit()
         .transition()
