@@ -450,17 +450,14 @@
       const hslValues = e.data.result;
       window.colorMap('#color-analysis svg#colorMap', hslValues);
       window.hueBar('#color-analysis svg#hueBar', hslValues);
-      console.log('Message received from worker');
     })
 
-    setInterval(function () {
+    setInterval(() => {
       var imageCanvas = copyCtx.canvas;
 
       var b = copyCtx.getImageData(200, 200, imageCanvas.width/4, imageCanvas.height/4);
 
-      worker.postMessage({
-        image : b
-      })
+      worker.postMessage({ image : b })
     }, 1000)
 
     document.addEventListener('keypress', function (keyboardEvent) {
