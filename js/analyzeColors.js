@@ -109,7 +109,6 @@
       .attr('height', height);
 
     // group lightness into buckets
-    console.log('about to re create lightness histogram')
     var lightnessHistogram = d3.nest()
       .key(function(d){ return Math.round(d.l); })
       .rollup(function(leaves){
@@ -135,17 +134,23 @@
       })
       .entries(hslArray);
 
-    var margin = {bottom: 30, left: 30, right: 100, top: 30},
+    var saturationHistogram = d3.nest()
+      .key(function(d){ return Math.round(d.s);})
+      .rollup(function(leaves){ return leaves.length; })
+      .entries(hslArray);
+
+    var margin = {bottom: 30, left: 100, right: 100, top: 30},
     sWidth = width - margin.left - margin.right,
     sHeight = height- margin.bottom - margin.top,
     x = d3.scale.linear().domain([0, 360]).range([margin.left, sWidth]), //hue
     y = d3.scale.linear().domain([100, 0]).range([margin.top, sHeight]), //saturation & lightness
-    barW = d3.scale.linear().range([0, margin.right]),
+    barL = d3.scale.linear().range([0, margin.right]),
+    barS = d3.scale.linear().range([margin.left, 0]),
     xAxis = d3.svg.axis().scale(x),
     yAxis = d3.svg.axis().scale(y).orient('left'),
     r = d3.scale.sqrt().range([1, 10]),
-    maxLightness = { key: '', total: 0};
-
+    maxLightness = { key: '', total: 0},
+    maxSaturation = {key: '', total: 0};
 
     lightnessHistogram.forEach(function(d){
         if (d.values.total > maxLightness.total){
@@ -154,7 +159,7 @@
         }
     });
 
-    barW.domain([0, maxLightness.total]);
+    barL.domain([0, maxLightness.total]);
 
     redraw(maxLightness.key);
 
@@ -163,20 +168,63 @@
     }
 
     function redraw(currentKey){
-        var maxValues = lightnessHistogram.filter(function(d){
+        var selectedValues = lightnessHistogram.filter(function(d){
             return d.key === currentKey;
         })[0].values.values;
 
         var maxCount = 0;
 
-        for (var k in maxValues){
-            if (maxValues[k] > maxCount){
-                maxCount = maxValues[k];
+        for (var k in selectedValues){
+            if (selectedValues[k] > maxCount){
+                maxCount = selectedValues[k];
             }
         }
 
         r.domain([1, maxCount]);
 
+        var filteredSaturation = Object.keys(selectedValues).map(function(d){
+          return { key: d.split(',')[1], value: selectedValues[d]};
+        });
+
+        var selectedSaturation = d3.nest()
+          .key(function(d){ return d.key; })
+          .rollup(function(values){
+            return values.map(function(d){
+              return d.value;
+              })
+              .reduce(function(prev, curr){
+              return prev + curr;
+            })
+          })
+          .entries(filteredSaturation);
+
+        selectedSaturation.forEach(function(d){
+            if (d.values > maxSaturation.total){
+                maxSaturation.total = d.values;
+                maxSaturation.key = d.key;
+            }
+        });
+
+        barS.domain([maxSaturation.total, 0]);
+
+        var barsSSub = svg.selectAll('rect.saturationSub')
+            .data(selectedSaturation);
+
+        barsSSub.enter()
+            .append('rect')
+            .attr('height', 3)
+            .attr('class', 'saturationSub');
+
+        barsSSub
+            .attr('y', function(d){ return y(parseInt(d.key)); })
+            .transition()
+            .attr('x', function(d){ return margin.left - barS(d.values)})
+            .attr('width', function(d){ return barS(d.values); })
+
+        barsSSub.exit()
+            .transition()
+            .attr('width', 0)
+            .remove();
 
         svg.selectAll('g.axis')
             .remove();
@@ -196,8 +244,10 @@
             .attr("transform", "translate(" + (margin.left + sWidth) + ",0)")
             .call(yAxis);
 
+
+
         var circles = svg.selectAll('circle')
-           .data(Object.keys(maxValues));
+           .data(Object.keys(selectedValues));
 
         circles.exit()
            .transition()
@@ -214,16 +264,17 @@
            .attr('fill', function(d){ return 'hsl(' + d + ',' + currentKey +'%)'})
            .transition()
            .duration(500)
-           .attr('r', function(d){ return r(maxValues[d])})
+           .attr('r', function(d){ return r(selectedValues[d])})
 
-        var bars = svg.selectAll('rect')
+        var barsL = svg.selectAll('rect.lightness')
             .data(lightnessHistogram);
 
-        bars.enter()
+        barsL.enter()
             .append('rect')
-            .attr('height', 3);
+            .attr('height', 3)
+            .attr('class', 'lightness');
 
-        bars.attr('x', margin.left + sWidth)
+        barsL.attr('x', margin.left + sWidth)
             .attr('y', function(d){ return y(parseInt(d.key)); })
             .attr('class', function(d){
                 if (d.key === currentKey){
@@ -234,16 +285,15 @@
             })
             .on('click', clickedBar)
             .transition()
-            .attr('width', function(d){ return barW(d.values.total); })
+            .attr('width', function(d){ return barL(d.values.total); })
 
-
-        bars.exit()
+        barsL.exit()
             .transition()
             .attr('width', 0)
             .remove();
 
+
+
     }
-
-
 
   }
