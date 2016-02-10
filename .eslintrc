@@ -1,6 +1,7 @@
 {
   "env": {
     "es6": true,
+    "worker": true,
     "node": true,
     "browser": true,
     "builtin": true
@@ -68,15 +69,8 @@
     "no-multiple-empty-lines": [
       2, {"max": 3, "maxEOF": 1}
     ],
-    "quotes": [
-      2,
-      "single",
-      "avoid-escape"
-    ],
-    "semi": [
-      0,
-      "never"
-    ],
+    "quotes": 0,
+    "semi": 0,
     "semi-spacing": 0,
     "strict": 0,
     "valid-typeof": 2,
