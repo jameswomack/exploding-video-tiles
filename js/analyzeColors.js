@@ -207,9 +207,6 @@
 
     }
 
-<<<<<<< HEAD
-
-
   }
 
   function circlePack(selectionID, data) {
@@ -430,6 +427,4 @@
       function fillCircle2Level(d) {
           return d3.hsl(d.rh * 15, (d.rs + 1) / 10, (d.rl) / 5).toString()
       }
-=======
->>>>>>> origin/master
   }

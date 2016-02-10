@@ -446,7 +446,6 @@
       inputEl.keydown  = onchange
     }
 
-<<<<<<< HEAD
     videoEl.addEventListener('pause', function () {
 
     const hslValues = hslToColor(hslValuesFromContext(copyCtx));
@@ -457,14 +456,6 @@
       circlePack('svg#circlePack', hslValues)
     })
 
-
-    document.addEventListener('keypress', function (keyboardEvent) {
-      if ((keyboardEvent.keyCode === 112 || keyboardEvent.keyCode === 32) &&
-          !keyboardEvent.shiftKey && !keyboardEvent.metaKey &&
-          !keyboardEvent.altKey   && !keyboardEvent.ctrlKey)
-        videoEl[videoEl.paused ? 'play' : 'pause']()
-    })
-=======
     var worker = new Worker('js/worker.js');
     worker.addEventListener('message', function (e) {
       const hslValues = e.data.result;
@@ -480,7 +471,6 @@
     document.addEventListener('keypress', e =>
       W.matchesKeyCodes(e, [ 112, 32 ]) && W.isNotKeyCombo(e) &&
           videoEl[videoEl.paused ? 'play' : 'pause']())
->>>>>>> origin/master
 
     const instrEl = document.getElementById('keyboard-event-instructions')
     getNotificationWithPermissions(instrEl.innerText || instrEl.textContent, function (success) {
