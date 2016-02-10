@@ -31,8 +31,9 @@
 
   function hueBar(svgSel, hslArray) {
     const svg = d3.select(svgSel),
-      width = 600,
-      height = 200;
+      width = 800,
+      height = 100,
+      margin = {left: 100, right: 100};
 
     svg.attr('width', width)
       .attr('height', height);
@@ -43,8 +44,8 @@
           .rollup(function(leaves){ return leaves.length; })
           .entries(hslArray);
 
-    var x = d3.scale.linear().domain([0, 360]).range([30, width - 30]),
-    y = d3.scale.linear().range([30, height -30]),
+    var x = d3.scale.linear().domain([0, 360]).range([margin.left, width - margin.left - margin.right]),
+    y = d3.scale.linear().range([0, height]),
     max = 0;
 
     colorHistogram.forEach(function(group){
@@ -161,7 +162,23 @@
 
     barL.domain([0, maxLightness.total]);
 
+    svg.selectAll('text.title')
+      .remove();
+
+    svg.append('text')
+      .attr('class', 'title')
+      .attr('x', margin.left)
+      .attr('y', margin.top - 15)
+      .text('Saturation')
+
+    svg.append('text')
+      .attr('class', 'title')
+      .attr('x', margin.left + sWidth)
+      .attr('y', margin.top - 15)
+      .text('Lightness')
+
     redraw(maxLightness.key);
+
 
     function clickedBar(d){
         redraw(d.key);
@@ -207,21 +224,21 @@
 
         barS.domain([maxSaturation.total, 0]);
 
-        var barsSSub = svg.selectAll('rect.saturationSub')
+        var barsS = svg.selectAll('rect.saturation')
             .data(selectedSaturation);
 
-        barsSSub.enter()
+        barsS.enter()
             .append('rect')
             .attr('height', 3)
-            .attr('class', 'saturationSub');
+            .attr('class', 'saturation');
 
-        barsSSub
+        barsS
             .attr('y', function(d){ return y(parseInt(d.key)); })
             .transition()
             .attr('x', function(d){ return margin.left - barS(d.values)})
             .attr('width', function(d){ return barS(d.values); })
 
-        barsSSub.exit()
+        barsS.exit()
             .transition()
             .attr('width', 0)
             .remove();
@@ -266,13 +283,12 @@
            .duration(500)
            .attr('r', function(d){ return r(selectedValues[d])})
 
-        var barsL = svg.selectAll('rect.lightness')
+        var barsL = svg.selectAll('rect:not(.saturation)')
             .data(lightnessHistogram);
 
         barsL.enter()
             .append('rect')
             .attr('height', 3)
-            .attr('class', 'lightness');
 
         barsL.attr('x', margin.left + sWidth)
             .attr('y', function(d){ return y(parseInt(d.key)); })
@@ -291,8 +307,6 @@
             .transition()
             .attr('width', 0)
             .remove();
-
-
 
     }
 
