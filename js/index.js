@@ -3,7 +3,8 @@
 
 (function () {
   var videoEl, copyCtx, copyCanvasEl, drawCtx, videoWidth, videoHeight,
-      videoRatio, currentTileModeName = 'rectangles', RAD = Math.PI / 180
+      videoRatio, currentTileModeName = 'rectangles', RAD = Math.PI / 180,
+      W = window
 
   var tiles = new Tiles()
 
@@ -453,19 +454,13 @@
     })
 
     setInterval(() => {
-      var imageCanvas = copyCtx.canvas;
-
-      var b = copyCtx.getImageData(200, 200, imageCanvas.width/4, imageCanvas.height/4);
-
-      worker.postMessage({ image : b })
+      const image = copyCtx.getImageData(200, 200, copyCtx.canvas.width/4, copyCtx.canvas.height/4);
+      worker.postMessage({ image })
     }, 1000)
 
-    document.addEventListener('keypress', function (keyboardEvent) {
-      if ((keyboardEvent.keyCode === 112 || keyboardEvent.keyCode === 32) &&
-          !keyboardEvent.shiftKey && !keyboardEvent.metaKey &&
-          !keyboardEvent.altKey   && !keyboardEvent.ctrlKey)
-        videoEl[videoEl.paused ? 'play' : 'pause']()
-    })
+    document.addEventListener('keypress', e =>
+      W.matchesKeyCodes(e, [ 112, 32 ]) && W.isNotKeyCombo(e) &&
+          videoEl[videoEl.paused ? 'play' : 'pause']())
 
     const instrEl = document.getElementById('keyboard-event-instructions')
     getNotificationWithPermissions(instrEl.innerText || instrEl.textContent, function (success) {
