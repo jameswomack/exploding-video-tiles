@@ -461,6 +461,8 @@
       const hslValues = e.data.result;
       window.colorMap('#color-analysis svg#colorMap', hslValues);
       window.hueBar('#color-analysis svg#hueBar', hslValues);
+      window.circlePack('svg#circlePack', hslValues)
+
     })
 
     setInterval(() => {
