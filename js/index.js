@@ -471,7 +471,7 @@
     })
 
     const instrEl = document.getElementById('keyboard-event-instructions')
-    getNotificationWithPermissions(instrEl.innerText, function (success) {
+    getNotificationWithPermissions(instrEl.innerText || instrEl.textContent, function (success) {
       !success && instrEl.classList.remove('hide')
     })
 
