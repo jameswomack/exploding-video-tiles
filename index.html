@@ -5,8 +5,10 @@
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <!--   <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.12/d3.min.js"></script> -->
   <script type="text/javascript" src="js/d3.min.js"></script>
+	<script type="text/javascript" src="js/keyboard.js"></script>
   <script type="text/javascript" src="js/analyzeColors.js"></script>
 	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="js/worker.js"></script>
 	<link rel="stylesheet" type="text/css" href="css/index.css" />
 </head>
 <body class="reset invert">
@@ -43,6 +45,7 @@
 	</section>
 
   <section id="color-analysis" class="center">
+    <svg id="circlePack" class="center"></svg>
     <svg id="colorMap" class="center"></svg>
     <svg id="hueBar" class="center"></svg>
     <svg id="hueScatter" class="center"></svg>
