@@ -101,7 +101,7 @@
 
   }
 
-  function colorMap(svgSel, hslArray) {
+  function colorMap(svgSel, hslArray, sl) {
     const svg = d3.select(svgSel),
       width = 800,
       height = 400;
@@ -261,14 +261,11 @@
             .attr("transform", "translate(" + (margin.left + sWidth) + ",0)")
             .call(yAxis);
 
-
-
         var circles = svg.selectAll('circle')
            .data(Object.keys(selectedValues));
 
         circles.exit()
            .transition()
-           .duration(500)
            .attr('r', 0)
            .remove();
 
@@ -280,10 +277,9 @@
            .attr('cy', function(d) { return y(parseInt(d.split(',')[1]))})
            .attr('fill', function(d){ return 'hsl(' + d + ',' + currentKey +'%)'})
            .transition()
-           .duration(500)
            .attr('r', function(d){ return r(selectedValues[d])})
 
-        var barsL = svg.selectAll('rect:not(.saturation)')
+        var barsL = svg.selectAll('rect.lightness')
             .data(lightnessHistogram);
 
         barsL.enter()
@@ -294,9 +290,9 @@
             .attr('y', function(d){ return y(parseInt(d.key)); })
             .attr('class', function(d){
                 if (d.key === currentKey){
-                    return 'highlight';
+                    return 'highlight lightness';
                 } else {
-                    return '';
+                    return 'lightness';
                 }
             })
             .on('click', clickedBar)
