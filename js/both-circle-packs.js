@@ -451,7 +451,7 @@
     const hslValues = hslToColor(hslValuesFromContext(copyCtx));
       window.colorMap('#color-analysis svg#colorMap', hslValues);
       window.hueBar('#color-analysis svg#hueBar', hslValues);
-      window.singleCirclePack('svg#circlePack', hslValues)
+      window.bothCirclePacks('svg#circlePack', hslValues)
     })
 
     var worker = new Worker('js/worker.js');
@@ -459,7 +459,7 @@
       const hslValues = e.data.result;
       window.colorMap('#color-analysis svg#colorMap', hslValues);
       window.hueBar('#color-analysis svg#hueBar', hslValues);
-      window.singleCirclePack('svg#circlePack', hslValues)
+      window.bothCirclePacks('svg#circlePack', hslValues)
 
     })
 

@@ -359,7 +359,7 @@ function colorMap(svgSel, hslArray) {
           return d3.hsl(d.rh * 15, (d.rs + 1) / 10, (d.rl) / 5).toString()
       }
   }
-  function twoCirclePacks(selectionID, data) {
+  function bothCirclePacks(selectionID, data) {
     d3.select(selectionID)
       .attr("height", 1440)
       .attr("width", 1200)
