@@ -3,22 +3,62 @@ function colorMap(svgSel, hslArray) {
       width = 800,
       height = 400;
 
+    var slScale = d3.scale.linear().domain([0, 100]).rangeRound([0, 50]);
+    var hScale = d3.scale.linear().domain([0, 360]).rangeRound([0, 180]);
+
     svg.attr('width', width)
       .attr('height', height);
 
+    var dataHash = {};
+     var newData = []
+
+    hslArray.forEach((d, i) => {
+
+      var datapoint = {};
+      datapoint.h = hScale(d.h)
+      datapoint.s = slScale(d.s)
+      datapoint.l = slScale(d.l)
+
+      if (datapoint.l === 0) {
+        datapoint.h = 0;
+        datapoint.s = 0;
+        datapoint.l = 0;
+      }
+
+      if (datapoint.l === slScale.range[1]) {
+        datapoint.h = 0;
+        datapoint.s = 0;
+        datapoint.l = slScale.range[1];
+      }
+
+      datapoint.group = d.group;
+      datapoint.value = 1;
+      var hashString = datapoint.group + "-" + datapoint.h + "-" + datapoint.s + "-" + datapoint.l;
+      datapoint.key = hashString;
+
+      if (dataHash[hashString]) {
+        dataHash[hashString].value = dataHash[hashString].value + 1;
+      }
+      else {
+        dataHash[hashString] = datapoint;
+        newData.push(datapoint);
+      }
+
+      });
+
     // group lightness into buckets
     var lightnessHistogram = d3.nest()
-      .key(function(d){ return Math.round(d.l); })
+      .key(function(d){ return slScale.invert(d.l); })
       .rollup(function(leaves){
 
             var swatches = {};
             leaves.forEach(function(l){
-                var h = Math.round(l.h),
-                s = Math.round(l.s),
-                key = h + ',' + s + '%';
+                var h = l.h,
+                s = l.s,
+                key = hScale.invert(h) + ',' + slScale.invert(s) + '%';
 
                 if (!swatches[key]){
-                    swatches[key] = 1;
+                    swatches[key] = l.value;
                 } else {
                     swatches[key] = swatches[key] + 1;
                 }
@@ -30,12 +70,12 @@ function colorMap(svgSel, hslArray) {
         };
 
       })
-      .entries(hslArray);
+      .entries(newData);
 
     var saturationHistogram = d3.nest()
-      .key(function(d){ return Math.round(d.s);})
+      .key(function(d){ return d.s;})
       .rollup(function(leaves){ return leaves.length; })
-      .entries(hslArray);
+      .entries(newData);
 
     var margin = {bottom: 30, left: 100, right: 100, top: 30},
     sWidth = width - margin.left - margin.right,
@@ -126,7 +166,7 @@ function colorMap(svgSel, hslArray) {
 
         barsS.enter()
             .append('rect')
-            .attr('height', 3)
+            .attr('height', 6)
             .attr('class', 'saturation');
 
         barsS
@@ -172,7 +212,7 @@ function colorMap(svgSel, hslArray) {
         circles
            .attr('cx', function(d) { return x(parseInt(d.split(',')[0]))})
            .attr('cy', function(d) { return y(parseInt(d.split(',')[1]))})
-           .attr('fill', function(d){ return 'hsl(' + d + ',' + currentKey +'%)'})
+           .attr('fill', function(d){ return 'hsl(' + d + ',' + currentKey +'%'})
            .transition()
            .attr('r', function(d){ return r(selectedValues[d])})
 
@@ -181,7 +221,7 @@ function colorMap(svgSel, hslArray) {
 
         barsL.enter()
             .append('rect')
-            .attr('height', 3)
+            .attr('height', 6)
 
         barsL.attr('x', margin.left + sWidth)
             .attr('y', function(d){ return y(parseInt(d.key)); })

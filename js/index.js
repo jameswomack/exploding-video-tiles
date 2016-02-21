@@ -413,7 +413,7 @@
     PAINTRECT.width  = outputEl.clientWidth
     PAINTRECT.height = outputEl.clientHeight
 
-    videoEl = document.getElementById('sourcevid')
+    videoEl = document.getElementById('sourcevid');
 
     copyCanvasEl = document.getElementById('sourcecopy')
 
@@ -465,7 +465,8 @@
 
     setInterval(() => {
       if (!videoEl.paused){
-        const image = copyCtx.getImageData(200, 200, copyCtx.canvas.width/4, copyCtx.canvas.height/4);
+        const image = copyCtx.getImageData(200, 100, copyCtx.canvas.width/4, copyCtx.canvas.height/4);
+        // const image = copyCtx.getImageData(0, 0, copyCtx.canvas.width, copyCtx.canvas.height);
         worker.postMessage({ image })
       }
     }, 1000)
