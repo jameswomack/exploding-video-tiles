@@ -4,35 +4,75 @@ self.addEventListener('message', function(e) {
   self.postMessage({ result : result })
 }, false);
 
-function hslToColor(hslArray) {
+function hslToColor(imageData, scale) {
   //converts hue to color groups
-  hslArray = hslArray.map(function(d){
-      var hue = d.h;
 
-      if (hue < 23){
-          d.group = "red";
-      } else if (hue < 42){
-          d.group = "orange";
-      } else if (hue < 70){
-          d.group = "yellow";
-      } else if (hue < 164){
-          d.group = "green";
-      } else if (hue < 203){
-          d.group = "cyan";
-      } else if (hue < 262){
-          d.group = "blue";
-      } else if (hue < 299){
-          d.group = "purple";
-      } else if (hue < 337){
-          d.group = "magenta";
-      } else {
-          d.group = "red";
-      }
+  var dataHash = {};
+  var newData = [];
 
-      return d;
-  });
+   function scale(value){
+     return Math.round(value/2)*2;
+   }
 
-  return hslArray;
+  imageData.forEach((d, i) => {
+
+    var datapoint = {};
+
+    datapoint.h = scale(d.h)
+    datapoint.s = scale(d.s)
+    datapoint.l = scale(d.l)
+
+    if (datapoint.l === 0) {
+      datapoint.h = 0;
+      datapoint.s = 0;
+      datapoint.l = 0;
+    }
+
+    if (datapoint.l === 100) {
+      datapoint.h = 0;
+      datapoint.s = 0;
+      datapoint.l = 100;
+    }
+
+    datapoint.group = d.group;
+    datapoint.value = 1;
+
+    var hue = datapoint.h;
+
+    if (hue < 23){
+        datapoint.group = "red";
+    } else if (hue < 42){
+        datapoint.group = "orange";
+    } else if (hue < 70){
+        datapoint.group = "yellow";
+    } else if (hue < 164){
+        datapoint.group = "green";
+    } else if (hue < 203){
+        datapoint.group = "cyan";
+    } else if (hue < 262){
+        datapoint.group = "blue";
+    } else if (hue < 299){
+        datapoint.group = "purple";
+    } else if (hue < 337){
+        datapoint.group = "magenta";
+    } else {
+        datapoint.group = "red";
+    }
+
+    var hashString = datapoint.group + "-" + datapoint.h + "-" + datapoint.s + "-" + datapoint.l;
+    datapoint.key = hashString;
+
+    if (dataHash[hashString]) {
+      dataHash[hashString].value = dataHash[hashString].value + 1;
+    }
+    else {
+      dataHash[hashString] = datapoint;
+      newData.push(datapoint);
+    }
+
+    });
+
+  return newData;
 }
 
 function hueBar(svgSel, hslArray) {

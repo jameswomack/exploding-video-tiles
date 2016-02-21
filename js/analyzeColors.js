@@ -9,53 +9,16 @@ function colorMap(svgSel, hslArray) {
     svg.attr('width', width)
       .attr('height', height);
 
-    var dataHash = {};
-     var newData = []
-
-    hslArray.forEach((d, i) => {
-
-      var datapoint = {};
-      datapoint.h = hScale(d.h)
-      datapoint.s = slScale(d.s)
-      datapoint.l = slScale(d.l)
-
-      if (datapoint.l === 0) {
-        datapoint.h = 0;
-        datapoint.s = 0;
-        datapoint.l = 0;
-      }
-
-      if (datapoint.l === slScale.range[1]) {
-        datapoint.h = 0;
-        datapoint.s = 0;
-        datapoint.l = slScale.range[1];
-      }
-
-      datapoint.group = d.group;
-      datapoint.value = 1;
-      var hashString = datapoint.group + "-" + datapoint.h + "-" + datapoint.s + "-" + datapoint.l;
-      datapoint.key = hashString;
-
-      if (dataHash[hashString]) {
-        dataHash[hashString].value = dataHash[hashString].value + 1;
-      }
-      else {
-        dataHash[hashString] = datapoint;
-        newData.push(datapoint);
-      }
-
-      });
-
     // group lightness into buckets
     var lightnessHistogram = d3.nest()
-      .key(function(d){ return slScale.invert(d.l); })
+      .key(function(d){ return d.l; })
       .rollup(function(leaves){
 
             var swatches = {};
             leaves.forEach(function(l){
                 var h = l.h,
                 s = l.s,
-                key = hScale.invert(h) + ',' + slScale.invert(s) + '%';
+                key = h + ',' + s + '%';
 
                 if (!swatches[key]){
                     swatches[key] = l.value;
@@ -70,12 +33,12 @@ function colorMap(svgSel, hslArray) {
         };
 
       })
-      .entries(newData);
+      .entries(hslArray);
 
     var saturationHistogram = d3.nest()
       .key(function(d){ return d.s;})
       .rollup(function(leaves){ return leaves.length; })
-      .entries(newData);
+      .entries(hslArray);
 
     var margin = {bottom: 30, left: 100, right: 100, top: 30},
     sWidth = width - margin.left - margin.right,
