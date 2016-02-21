@@ -1,3 +1,7 @@
+body {
+  font-family: 'Lato', Arial;
+}
+
 .reset {
 	margin: 0;
 	padding: 0;
@@ -25,6 +29,11 @@
 label {
   clear: both;
   display: flex;
+  margin: 10px 25px;
+}
+
+label > input {
+  margin-left: 10px;
 }
 
 label:before {
