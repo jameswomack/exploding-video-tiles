@@ -47,14 +47,14 @@ function hslToColor(imageData, scale) {
         datapoint.group = "yellow";
     } else if (hue < 164){
         datapoint.group = "green";
-    } else if (hue < 203){
-        datapoint.group = "cyan";
-    } else if (hue < 262){
+    // } else if (hue < 203){
+    //     datapoint.group = "cyan";
+    } else if (hue < 252){ //262
         datapoint.group = "blue";
-    } else if (hue < 299){
+    } else if (hue < 337){ //299
         datapoint.group = "purple";
-    } else if (hue < 337){
-        datapoint.group = "magenta";
+    // } else if (hue < 337){
+    //     datapoint.group = "magenta";
     } else {
         datapoint.group = "red";
     }

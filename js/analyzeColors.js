@@ -264,7 +264,7 @@ function colorMap(svgSel, hslArray) {
 
 
       var max = d3.max(nestedData.map(d => d3.sum(d.values.map(p => d3.sum(p.values.map(q => q.value))))))
-      var colorAuthority = ["red","orange","yellow","green","cyan","blue","purple","magenta","red"]
+      var colorAuthority = ["red","orange","yellow","green","cyan","blue","purple","red"]
 
       colorAuthority.forEach(authColor => {
         var d = nestedData.filter(p => p.key === authColor)[0];
@@ -365,7 +365,7 @@ function colorMap(svgSel, hslArray) {
   function bothCirclePacks(selectionID, data) {
     d3.select(selectionID)
       .attr("height", 1440)
-      .attr("width", 1200)
+      .attr("width", 900)
 
     var hScale = function(d) {return Math.round(d / 15)};
 
@@ -418,14 +418,15 @@ function colorMap(svgSel, hslArray) {
 
 
       var max = d3.max(nestedData.map(d => d3.sum(d.values.map(p => d3.sum(p.values.map(q => q.value))))))
-      var colorAuthority = ["red","orange","yellow","green","cyan","blue","purple","magenta","red"]
+      // var colorAuthority = ["red","orange","yellow","green","cyan","blue","purple","magenta","red"]
+      var colorAuthority = ["red","orange","yellow","purple","blue","green","red"]
 
       colorAuthority.forEach(authColor => {
         var d = nestedData.filter(p => p.key === authColor)[0];
         if (d) {
           var total = d3.sum(d.values.map(p => d3.sum(p.values.map(q => q.value))))
-          var packSize = total / max * 300;
-          packSize = 300
+          // var packSize = total / max * 300;
+          var packSize = 300
 
           packChart = d3.layout.pack();
           packChart.size([packSize,packSize])
@@ -450,7 +451,7 @@ function colorMap(svgSel, hslArray) {
         .enter()
         .append("g")
         .attr("class", colorAuthority[packedIndex])
-        .attr("transform", "translate(" + ((packedIndex%4 * 300)) + "," + ((Math.floor(packedIndex/4) * 300) + 830) + ")")
+        .attr("transform", "translate(" + ((packedIndex%3 * 300)) + "," + ((Math.floor(packedIndex/3) * 300) + 830) + ")")
         .append("text")
         .attr("y", 20)
         .attr("x", 200)
@@ -511,7 +512,7 @@ function colorMap(svgSel, hslArray) {
       .enter()
       .append("g")
       .attr("class", "overall")
-      .attr('transform', 'translate(200,0)')
+      .attr('transform', 'translate(50,0)')
       .append("line")
       .style("stroke", "gray")
       .style("stroke-width", "1px")

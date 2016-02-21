@@ -446,14 +446,6 @@
       inputEl.keydown  = onchange
     }
 
-    videoEl.addEventListener('pause', function () {
-
-    const hslValues = hslToColor(hslValuesFromContext(copyCtx));
-      window.colorMap('#color-analysis svg#colorMap', hslValues);
-      window.hueBar('#color-analysis svg#hueBar', hslValues);
-      window.bothCirclePacks('svg#circlePack', hslValues)
-    })
-
     var worker = new Worker('js/worker.js');
     worker.addEventListener('message', function (e) {
       const hslValues = e.data.result;
@@ -465,7 +457,7 @@
 
     setInterval(() => {
       if (!videoEl.paused){
-        const image = copyCtx.getImageData(200, 200, copyCtx.canvas.width/4, copyCtx.canvas.height/4);
+        const image = copyCtx.getImageData(100, 100, copyCtx.canvas.width/2, copyCtx.canvas.height/2);
         worker.postMessage({ image })
       }
     }, 1000)
