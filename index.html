@@ -13,6 +13,7 @@
 	<link rel="stylesheet" type="text/css" href="css/index.css" />
 </head>
 <body class="reset invert">
+  <h1>Exploding Tiles</h1>
 
   <section id="keyboard-event-instructions" class="hide">
     p or spacebar = play|pause toggler
@@ -24,7 +25,8 @@
     <option value="rectangles">
   </datalist>
 
-  <form id="draw-settings">
+  <form id="draw-settings" class="center">
+    <h2>Draw Settings</h2>
     <label for="NAME"><input name="NAME" value="rectangles" list="tile-mode-list" /></label>
     <label for="TILE_WIDTH"><input name="TILE_WIDTH" value="30" /></label>
     <label for="TILE_HEIGHT"><input name="TILE_HEIGHT" value="18" /></label>
@@ -32,18 +34,20 @@
     <label for="TILE_CENTER_WIDTH"><input name="TILE_CENTER_WIDTH" value="24" /></label>
     <label for="TILE_CENTER_HEIGHT"><input name="TILE_CENTER_HEIGHT" value="18" /></label>
   </form>
+</div>
 
-	<section id="original-video-container" class="hide">
-		<video id="sourcevid" autoplay="true" loop="true">
-			<source src="video/BigBuckBunny_640x360.mp4" type="video/mp4"/>
-			<source src="video/BigBuckBunny_640x360.ogv" type="video/ogg"/>
-		</video>
-		<canvas id="sourcecopy" width="640" height="360"></canvas>
-	</section>
+<div class="right-side">
+  <section id="original-video-container" class="hide">
+    <video id="sourcevid" autoplay="true" loop="true">
+      <source src="video/BigBuckBunny_640x360.mp4" type="video/mp4"/>
+      <source src="video/BigBuckBunny_640x360.ogv" type="video/ogg"/>
+    </video>
+    <canvas id="sourcecopy" width="640" height="360"></canvas>
+  </section>
 
-	<section id="exploded-tile-container" class="center">
-		<canvas id="output" width="1000" height="500"></canvas>
-	</section>
+  <section id="exploded-tile-container" class="center">
+    <canvas id="output" width="1000" height="500"></canvas>
+  </section>
 
   <section id="color-analysis" class="center">
     <svg id="colorMap" class="center"></svg>

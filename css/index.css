@@ -2,6 +2,18 @@ body {
   font-family: 'Lato', Arial;
 }
 
+h1, h2, h2, h4 {
+  text-align : center;
+}
+
+h1 {
+  padding : .4em 0 1em 0;
+}
+
+h2 {
+  text-decoration: overline;
+}
+
 .reset {
 	margin: 0;
 	padding: 0;
@@ -21,19 +33,27 @@ body {
   color: white;
 }
 
+form#draw-settings {
+  width  : 400px;
+
+}
+
 #exploded-tile-container {
 	width: 1000px;
 	height: 500px;
 }
 
 label {
-  clear: both;
-  display: flex;
-  margin: 10px 25px;
+  clear    : both;
+  display  : flex;
+  margin   : 10px 25px;
+  position : relative;
 }
 
 label > input {
-  margin-left: 10px;
+  left        : 240px;
+  margin-left : 10px;
+  position    : absolute;
 }
 
 label:before {

@@ -1,7 +1,15 @@
+// Self is the equivalent of `window` (browser) or `global` (server)
+self.processCounter = { count : 0 }
+
 self.addEventListener('message', function(e) {
   var data = e.data;
-  const result = hslToColor(hslValuesFromContext(data.image))
-  self.postMessage({ result : result })
+  if (!data.image) {
+    console.error('`data.image` is falsey, specifically:', data.image)
+  } else {
+    const result = hslToColor(hslValuesFromContext(data.image))
+    console.info('Successfully processed image data in our web worker', ++self.processCounter.count)
+    self.postMessage({ result : result })
+  }
 }, false);
 
 function hslToColor(imageData, scale) {
