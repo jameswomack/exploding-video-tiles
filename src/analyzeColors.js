@@ -1,5 +1,9 @@
-function colorMap (svgSel, hslArray) { //eslint-disable-line
-    const svg = d3.select(svgSel),
+// `import`
+var d3 = require('d3')
+
+// `export`
+window.colorMap = function colorMap (svgSel, hslArray) {
+    var svg = d3.select(svgSel),
       width = 800,
       height = 400;
 
@@ -200,7 +204,7 @@ function colorMap (svgSel, hslArray) { //eslint-disable-line
 
   }
 
-  function singleCirclePack (selectionID, data) { // eslint-disable-line
+  window.singleCirclePack = function singleCirclePack (selectionID, data) {
     d3.select(selectionID)
       .attr("height", 800)
       .attr("width", 1200)
@@ -340,7 +344,7 @@ function colorMap (svgSel, hslArray) { //eslint-disable-line
         .remove();
 
 
-      function fillCircle (d) { // eslint-disable-line
+      window.fillCircle = function fillCircle (d) {
 
         if (d.depth === 4) {
           return d3.hsl(d.key * 15, d.parent.key / 10, d.parent.parent.key / 10).toString()
@@ -354,7 +358,7 @@ function colorMap (svgSel, hslArray) { //eslint-disable-line
       }
   }
 
-  function bothCirclePacks(selectionID, data) { // eslint-disable-line
+  window.bothCirclePacks = function bothCirclePacks (selectionID, data) {
     d3.select(selectionID)
       .attr("height", 1440)
       .attr("width", 900)
@@ -546,7 +550,7 @@ function colorMap (svgSel, hslArray) { //eslint-disable-line
         .remove();
 
 
-      function fillCircle (d) { // eslint-disable-line
+      window.fillCircle = function fillCircle (d) {
 
         if (d.depth === 4) {
           return d3.hsl(d.key * 15, d.parent.key / 10, d.parent.parent.key / 10).toString()
@@ -559,3 +563,52 @@ function colorMap (svgSel, hslArray) { //eslint-disable-line
           return d3.hsl(d.rh * 15, (d.rs + 1) / 10, d.rl / 5).toString()
       }
   }
+
+window.hueBar = function hueBar (svgSel, hslArray) {
+  var svg = window.d3.select(svgSel),
+    width = 800,
+    height = 100,
+    margin = {left: 100, right: 100};
+
+  svg.attr('width', width)
+    .attr('height', height);
+
+    var colorHistogram = window.d3.nest()
+        .key(function (d) { return d.group; })
+        .key(function (d) { return Math.round(d.h); })
+        .rollup(function (leaves) { return leaves.length; })
+        .entries(hslArray);
+
+  var x = window.d3.scale.linear().domain([0, 360]).range([margin.left, width - margin.left - margin.right]),
+  y = window.d3.scale.linear().range([0, height]),
+  max = 0;
+
+  colorHistogram.forEach(function (group) {
+      var groupMax = window.d3.max(group.values, function (d) {
+        return d.values;
+      })
+
+      if (groupMax > max){
+        max = groupMax;
+      }
+  })
+
+  y.domain([0, max]);
+
+  svg.selectAll('rect')
+    .remove()
+
+  colorHistogram.forEach(function (group) {
+      svg.selectAll('rect.test')
+        .data(group.values)
+        .enter()
+        .append('rect')
+        .attr('x', function (d) { return x(d.key)})
+        .attr('y', function (d) { return height - y(d.values)})
+        .attr('height', function (d) {
+            return y(d.values)})
+        .attr('width', 2)
+        .attr('fill', function (d) { return 'hsl(' + d.key +', 80%, 50%)'})
+
+  })
+}

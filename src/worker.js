@@ -1,14 +1,20 @@
 // Self is the equivalent of `window` (browser) or `global` (server)
-self.processCounter = { count : 0 }
+var processCounter = { count : 0 }
 
-self.addEventListener('message', function (e) {
+// https://github.com/webpack/webpack/tree/master/examples/web-worker
+// https://github.com/webpack/worker-loader
+addEventListener('message', function (e) {
   var data = e.data;
 
   if (!data.image) {
+    // "Typed arrays & ImageData"
+    // http://www.ecma-international.org/ecma-262/6.0/#sec-uint8clampedarray
+    // https://developer.mozilla.org/en-US/docs/Web/API/ImageData/data
     console.error('`data.image` is falsey, specifically:', data.image)
   } else {
-    const result = hslToColor(hslValuesFromContext(data.image))
-    console.info('Successfully processed image data in our web worker', ++self.processCounter.count)
+    // `const`
+    var result = hslToColor(hslValuesFromContext(data.image))
+    console.info('Successfully processed image data in our web worker', ++processCounter.count)
     self.postMessage({ result : result })
   }
 }, false);
@@ -81,55 +87,6 @@ function hslToColor(imageData, scale) {
     });
 
   return newData;
-}
-
-function hueBar (svgSel, hslArray) { // eslint-disable-line
-  const svg = d3.select(svgSel),
-    width = 800,
-    height = 100,
-    margin = {left: 100, right: 100};
-
-  svg.attr('width', width)
-    .attr('height', height);
-
-    var colorHistogram = d3.nest()
-        .key(function (d) { return d.group; })
-        .key(function (d) { return Math.round(d.h); })
-        .rollup(function (leaves) { return leaves.length; })
-        .entries(hslArray);
-
-  var x = d3.scale.linear().domain([0, 360]).range([margin.left, width - margin.left - margin.right]),
-  y = d3.scale.linear().range([0, height]),
-  max = 0;
-
-  colorHistogram.forEach(function (group) {
-      var groupMax = d3.max(group.values, function (d) {
-        return d.values;
-      })
-
-      if (groupMax > max){
-        max = groupMax;
-      }
-  })
-
-  y.domain([0, max]);
-
-  svg.selectAll('rect')
-    .remove()
-
-  colorHistogram.forEach(function (group) {
-      svg.selectAll('rect.test')
-        .data(group.values)
-        .enter()
-        .append('rect')
-        .attr('x', function (d) { return x(d.key)})
-        .attr('y', function (d) { return height - y(d.values)})
-        .attr('height', function (d) {
-            return y(d.values)})
-        .attr('width', 2)
-        .attr('fill', function (d) { return 'hsl(' + d.key +', 80%, 50%)'})
-
-  })
 }
 
 function bound01 (n, max) {

@@ -7,6 +7,23 @@ by [James Womack](http://womack.io)
 <img src="http://i.imgur.com/oRdLPRf.png" alt="elliptical effect" width="600" />
 <img src="http://i.imgur.com/YPHQv5n.png" alt="rectangular effect" width="600" />
 
+### Project structure
+#### Chrome-style
+* JS: ./js
+* HTML: ./index.htm
+#### Webpack-style
+* JS: ./src
+* HTML: ./index.html
+
+The CSS is in the same place for both.
+
+### Running the experiment
+#### Chrome-style
+`npm start`
+#### Webpack-style
+`npm run dev-server`
+
+### If you came here via the CodeMentor lesson, you can stop reading at this point / ignore the rest
 
 ### Motivations
 1. I've witnessed a rapid growth in reliance on tooling to produce usable web projects. What was once a simple matter of opening your browser and experimenting is now an exercise in a sort of programming bureaucracy. While I enjoy many such tools and have even introduced them or encouraged their use to my peers, they should be used only when they expedite the process of creating useful or innovative projects. A simple web experiment does not require Gulp, Babel, Webpack, Stylus, React or even Node.js. A simple web experiment requires the MDN docs, passion for creation & a web browser. Thus, this project uses no transpilers, task runners or package managers of any kind
@@ -21,6 +38,3 @@ by [James Womack](http://womack.io)
 ### Prerequisites to run this experiment
 1. Chrome version 49.0.2612.0 canary (64-bit)
 2. enable-experimental-canvas-features & enable-javascript-harmony enabled (you can do it manually or use chrome-canary-experiment-enabler-osx off npmjs.org)
-
-### Running the experiment
-Simply open index.html in Chrome Canary

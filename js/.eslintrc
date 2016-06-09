@@ -1,6 +1,4 @@
 {
-  "parser": "babel-eslint",
-  "plugins": [ "react" ],
   "env": {
     "es6": true,
     "worker": true,
@@ -8,20 +6,17 @@
     "browser": true,
     "builtin": true
   },
-  "parserOptions": {
-    "ecmaVersion": 7,
-    "sourceType": "module",
-    "ecmaFeatures": {
-      "jsx": true,
-      "objectLiteralDuplicateProperties": true,
-      "destructuring": true,
-      "defaultParams": true,
-      "classes": true,
-      "arrowFunctions": true,
-      "modules": true
-    }
+  "ecmaFeatures": {
+    "objectLiteralDuplicateProperties": true,
+    "destructuring": true,
+    "defaultParams": true,
+    "classes": true,
+    "arrowFunctions": true,
+    "modules": true
   },
-  "globals": { },
+  "globals": {
+    "d3": true
+  },
   "rules": {
     "block-scoped-var": 2,
     "camelcase": 2,

@@ -1,14 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Intro Demo</title>
+	<title>Exploding Tiles (script-tag edition)</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <script type="text/javascript" src="js/d3.min.js"></script>
+	<script type="text/javascript" src="js/keyboard.js"></script>
+  <script type="text/javascript" src="js/analyzeColors.js"></script>
+	<script type="text/javascript" src="js/index.js"></script>
+	<script type="text/javascript" src="js/worker.js"></script>
   <link href='https://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css' />
-  <script type="text/javascript" src="js/explodingTiles.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="css/index.css" />
 </head>
 <body class="reset invert">
-  <h1>Exploding Tiles</h1>
-  <section id="react-root"></section>
+  <h1>Exploding Tiles (script-tag edition)</h1>
 
   <section id="keyboard-event-instructions" class="hide">
     p or spacebar = play|pause toggler
@@ -29,7 +33,9 @@
     <label for="TILE_CENTER_WIDTH"><input name="TILE_CENTER_WIDTH" value="24" /></label>
     <label for="TILE_CENTER_HEIGHT"><input name="TILE_CENTER_HEIGHT" value="18" /></label>
   </form>
+</div>
 
+<div class="right-side">
   <section id="original-video-container" class="hide">
     <video id="sourcevid" autoplay="true" loop="true">
       <source src="video/BigBuckBunny_640x360.mp4" type="video/mp4"/>

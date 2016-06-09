@@ -6,8 +6,11 @@
   "disallowMixedSpacesAndTabs": true,
   "disallowQuotedKeysInObjects": true,
   "disallowSpaceAfterPrefixUnaryOperators": true,
-  "esnext": true,
-  "excludeFiles": [],
+  "excludeFiles": [
+    "./js/d3.min.js",
+    "./js/analyzeColors.js",
+    "./src/analyzeColors.js"
+  ],
   "requireCapitalizedConstructors": true,
   "requireCurlyBraces": ["while", "do", "try", "catch"],
   "requireDotNotation": true,
