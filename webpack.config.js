@@ -38,11 +38,8 @@ const config = {
   module: {
     loaders: [{
       test: /\.jsx?$/,
-      include: [
-        Path.join(rootDir, 'js')
-      ],
-      cacheDirectory: true,
-      loader: 'babel'
+      exclude: /node_modules/,
+      loader: 'babel-loader'
     }, {
       test: /\.css$/,
       loaders: SHARED_STYLE_EXTENSIONS
@@ -53,25 +50,6 @@ const config = {
     __filename : true,
     fs         : 'empty'
   }
-};
-
-// Babel loader babelrc-like options
-config.module.loaders[0].query = {
-  plugins : [[
-    'react-transform', {
-      transforms: [{
-        transform : 'react-transform-hmr',
-        imports   : ['react'],
-        locals    : ['module']
-      }, {
-        transform : 'react-transform-catch-errors',
-        imports   : [
-          'react',
-          'redbox-react'
-        ]
-      }]
-    }
-  ]]
 };
 
 module.exports = config;

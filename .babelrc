@@ -1,8 +1,3 @@
 {
-  "presets": ["netflix-dea"],
-  "env": {
-    "prod": {
-      "plugins": [ "transform-react-remove-prop-types" ]
-    }
-  }
+  "presets": ["netflix-dea"]
 }

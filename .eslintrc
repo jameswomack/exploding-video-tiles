@@ -81,6 +81,13 @@
     "wrap-iife": [
       2,
       "inside"
-    ]
+    ],
+    "no-var": 1,
+    "prefer-template": 1,
+    "prefer-spread": 1,
+    "prefer-arrow-callback": 1,
+    "prefer-const": 1,
+    "prefer-rest-params": 1,
+    "prefer-reflect": 1
   }
 }
