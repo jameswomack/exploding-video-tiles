@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Intro Demo</title>
+	<title>Exploding Tiles ~ New School</title>
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <link href='https://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css' />
-  <script type="text/javascript" src="js/explodingTiles.min.js"></script>
+  <script type="text/javascript" src="js/explodingTiles.js"></script>
+	<script type="text/javascript" src="js/hslWorker.js"></script>
 </head>
 <body class="reset invert">
-  <h1>Exploding Tiles</h1>
+  <h1>Exploding Tiles ~ New School</h1>
   <section id="react-root"></section>
 
   <section id="keyboard-event-instructions" class="hide">
@@ -32,8 +33,8 @@
 
   <section id="original-video-container" class="hide">
     <video id="sourcevid" autoplay="true" loop="true">
-      <source src="video/BigBuckBunny_640x360.mp4" type="video/mp4"/>
-      <source src="video/BigBuckBunny_640x360.ogv" type="video/ogg"/>
+      <source src="assets/video/BigBuckBunny_640x360.mp4" type="video/mp4"/>
+      <source src="assets/video/BigBuckBunny_640x360.ogv" type="video/ogg"/>
     </video>
     <canvas id="sourcecopy" width="640" height="360"></canvas>
   </section>
@@ -43,11 +44,10 @@
   </section>
 
   <section id="color-analysis" class="center">
-    <svg id="colorMap" class="center"></svg>
-    <svg id="hueBar" class="center"></svg>
-
+		<!-- These ids are inconsistent in dash-case vs. camelCase -->
+    <svg id="colorMap"   class="center"></svg>
+    <svg id="hueBar"     class="center"></svg>
     <svg id="circlePack" class="center"></svg>
-    <!-- <svg id="hueScatter" class="center"></svg> -->
   </section>
 
 </body>

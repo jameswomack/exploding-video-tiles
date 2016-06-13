@@ -446,19 +446,18 @@
       inputEl.keydown  = onchange
     }
 
-    var worker = new Worker('js/worker.js');
+    var worker = new Worker('old-school/worker.js');
     worker.addEventListener('message', function (e) {
       const hslValues = e.data.result;
       window.colorMap('#color-analysis svg#colorMap', hslValues);
       window.hueBar('#color-analysis svg#hueBar', hslValues);
       window.singleCirclePack('svg#circlePack', hslValues)
-
     })
 
     setInterval(() => {
       if (!videoEl.paused){
         const image = copyCtx.getImageData(100, 100, copyCtx.canvas.width/2, copyCtx.canvas.height/2);
-        worker.postMessage( { image })
+        worker.postMessage({ image })
       }
     }, 1000)
 

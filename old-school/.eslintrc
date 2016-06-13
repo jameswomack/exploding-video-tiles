@@ -68,6 +68,9 @@
     "no-multiple-empty-lines": [
       2, {"max": 3, "maxEOF": 1}
     ],
+    "prefer-arrow-callback": 0,
+    "prefer-template": 0,
+    "no-var": 0,
     "quotes": 0,
     "semi": 0,
     "semi-spacing": 0,

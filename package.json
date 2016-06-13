@@ -1,8 +1,8 @@
 {
   "name": "exploding-video-tiles",
-  "version": "2.0.0",
-  "description": "A Chrome Canary <canvas> experiment with <video>. Contains togglable rectangular & elliptical explosion effects. Notification API example also included. ",
-  "main": "src/index.js",
+  "version": "3.0.0",
+  "description": "A <canvas> experiment with <video>. Contains togglable rectangular & elliptical explosion effects. Notification API example also included.",
+  "main": "new-school/index.js",
   "devDependencies": {
     "babel-cli": "^6.9.0",
     "babel-core": "^6.9.1",
@@ -12,34 +12,37 @@
     "babel-preset-netflix-dea": "^1.0.0-alpha.2",
     "css-loader": "^0.23.1",
     "eslint": "^2.11.1",
-    "eslint-loader": "^1.3.0",
     "eslint-plugin-react": "^5.1.1",
     "http-server": "^0.8.5",
     "jscs": "^3.0.4",
+    "jsdom": "9.2.1",
     "style-loader": "^0.13.1",
+    "tap-difflet": "0.4.0",
+    "tap-notify": "1.0.0",
+    "tape": "4.5.1",
     "webpack": "^1.13.1",
     "webpack-dev-server": "^1.14.1",
-    "webpack-hot-middleware": "^2.10.0",
-    "worker-loader": "^0.7.0"
+    "webpack-hot-middleware": "^2.10.0"
   },
   "scripts": {
-    "build": "webpack",
+    "build": "NODE_ENV=production webpack",
     "dev-server": "webpack-dev-server --hot --port 8081",
-    "lint": "eslint src && jscs src",
+    "lint": "eslint new-school && jscs new-school",
     "start": "http-server -e htm",
-    "test": "tape"
+    "test": "tape -r babel-register -r ./tests/before.js tests/specs/*.js | tap-notify | tap-difflet"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jameswomack/exploding-video-tiles.git"
   },
   "keywords": [
+    "coding",
+    "teamsport",
     "canvas",
     "codementor",
     "chrome",
-    "cutting-edge",
     "d3",
-    "es6",
+    "esnext",
     "james",
     "jameswomack",
     "mobile",
