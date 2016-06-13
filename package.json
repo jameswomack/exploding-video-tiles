@@ -28,6 +28,8 @@
     "build": "NODE_ENV=production webpack",
     "dev-server": "webpack-dev-server --hot --port 8081",
     "lint": "eslint new-school && jscs new-school",
+    "new-school": "npm run dev-server",
+    "old-school": "npm start",
     "start": "http-server -e htm",
     "test": "tape -r babel-register -r ./tests/before.js tests/specs/*.js | tap-notify | tap-difflet"
   },
