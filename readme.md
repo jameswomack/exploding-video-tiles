@@ -1,6 +1,7 @@
 # Exploding Video Tiles
+## CodeMentor.io Lesson 3 Edition
 
-## A Chrome Canary `<canvas>` experiment with `<video>`. Contains togglable rectangular & elliptical explosion effects. Notification API example also included.
+A `<canvas>` experiment with `<video>`. Contains togglable rectangular & elliptical explosion effects. Notification API example also included.
 
 by [James Womack](http://womack.io)
 
@@ -8,20 +9,22 @@ by [James Womack](http://womack.io)
 <img src="http://i.imgur.com/YPHQv5n.png" alt="rectangular effect" width="600" />
 
 ### Project structure
-#### Chrome-style / Old School JS
+#### Old School JS
 * JS: ./old-school
 * HTML: ./index.htm
-#### Webpack-style / New School JS
+
+#### New School JS
 * JS: ./new-school
 * HTML: ./index.html
 
 The CSS is in the same place for both.
 
 ### Running the experiment
-#### Chrome-style
-`npm start`
-#### Webpack-style
-`npm run dev-server`
+#### Old School JS
+`npm run old-school`
+
+#### New School JS
+`npm run new-school`
 
 ### If you came here via the CodeMentor lesson, you can stop reading at this point / ignore the rest
 
@@ -35,6 +38,7 @@ The CSS is in the same place for both.
 1. I felt über-creative / in-the-zone without needing to manage tools not directly related to the scripts being executed
 2. I discovered that, without experimental flags enabled ([I wrote chrome-canary-experiment-enabler-osx](https://github.com/jameswomack/chrome-canary-experiment-enabler-osx) for this purpose) in the bleeding edge version of Chrome, it wasn't so easy. Even with these flags enabled, `import` and `export` statements didn't work. I'd certainly have put `Tile` and `Tiles` in their own modules if those statements *did* work
 3. I found `<canvas>` to be fairly familiar, having worked with SVG, OpenGL, PDFs & CoreAnimation in the past. I struggled to mask images with ellipses in the exact way I wanted, but my rusty geometry skills are at fault there, rather than the `<canvas>` API being at fault
+4. Once you have more than two main components to your experiment / application, you arrive at a place where setting up tooling becomes more of a benefit than a hinderance
 
 ### Prerequisites to run this experiment
 1. Chrome version 49.0.2612.0 canary (64-bit)
