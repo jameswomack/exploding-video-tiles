@@ -12,19 +12,24 @@ import { render as renderHueBar }         from './components/hue-bar'
 import { matchesKeyCodes, isNotKeyCombo } from './event-delegates/keyboard'
 
 export function attemptNotification (msg, next) {
-  if (typeof window === 'undefined' || !('Notification' in window))
+  if (typeof window === 'undefined' || !('Notification' in window)) {
+    console.error('Notification API unavailable')
     return next(false)
-  else if (window.Notification.permission === 'granted')
+  } else if (window.Notification.permission === 'granted')
     return next(true, new window.Notification(msg))
   else if (window.Notification.permission !== 'denied')
     window.Notification.requestPermission(permission => {
       if (permission === 'granted')
         return next(true, new window.Notification(msg))
-      else
+      else {
+        console.error(`Notification request denied ${permission}`)
         return next(false)
+      }
     })
-  else
+  else {
+    console.error('Notification request previously denied')
     return next(false)
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -35,6 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
       outputEl     : document.getElementById('output'),
       shouldStart  : true
     })
+
+  videoEl.volume = 0
 
   listenToInputs({
     formEl   : document.querySelector('form'),

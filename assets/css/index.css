@@ -86,3 +86,8 @@ label:before {
 #color-analysis svg#colorMap rect.highlight {
   fill: white;
 }
+
+#keyboard-event-instructions {
+  margin: 0 auto;
+  text-align: center;
+}

@@ -1,9 +1,5 @@
 import d3 from 'd3'
 
-function scale  (d, by) { return Math.round(d / by) }
-function hScale (d)     { return scale(d, 15) }
-function oScale (d)     { return scale(d, 10) }
-function lScale (d)     { return scale(d, 20) }
 
 export function translateGroup (selectionID, {
   translateX  = 0,
@@ -160,4 +156,21 @@ export function render (selectionID, data) {
   createCircles(packG, circleData)
   animateCirclePackGroupPosition(packG)
   rotateAndColorize(packG, circleData)
+}
+
+
+function scale  (d, by) {
+  return Math.round(d / by)
+}
+
+function hScale (d)     {
+  return scale(d, 15)
+}
+
+function oScale (d)     {
+  return scale(d, 10)
+}
+
+function lScale (d)     {
+  return scale(d, 20)
 }
