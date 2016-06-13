@@ -8,6 +8,12 @@ by [James Womack](http://womack.io)
 <img src="http://i.imgur.com/oRdLPRf.png" alt="elliptical effect" width="600" />
 <img src="http://i.imgur.com/YPHQv5n.png" alt="rectangular effect" width="600" />
 
+### Program requirements
+* Chrome 49.x
+* Node 6.x.x
+* NPM 3.8.x
+Feel free to use [this](https://gist.github.com/jameswomack/5b7583e054238d3f9e0e07a326fd8d44) to check out your versions
+
 ### Project structure
 #### Old School JS
 * JS: ./old-school

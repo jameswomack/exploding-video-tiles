@@ -1,4 +1,4 @@
-function colorMap (svgSel, hslArray) { //eslint-disable-line
+window.colorMap = function colorMap (svgSel, hslArray) {
     const svg = d3.select(svgSel),
       width = 800,
       height = 400;
@@ -138,16 +138,19 @@ function colorMap (svgSel, hslArray) { //eslint-disable-line
         svg.selectAll('g.axis')
             .remove();
 
+        // eslint-disable-next-line
         svg.append("g")
             .attr("class", "x axis")
             .attr("transform", "translate(0," + (height - margin.top) + ")")
             .call(xAxis);
 
+        // eslint-disable-next-line
         svg.append("g")
             .attr("class", "y axis")
             .attr("transform", "translate(" + margin.left + ",0)")
             .call(yAxis);
 
+        // eslint-disable-next-line
         svg.append("g")
             .attr("class", "y-bar axis")
             .attr("transform", "translate(" + (margin.left + sWidth) + ",0)")
@@ -200,7 +203,7 @@ function colorMap (svgSel, hslArray) { //eslint-disable-line
 
   }
 
-  function singleCirclePack (selectionID, data) { // eslint-disable-line
+  window.singleCirclePack = function singleCirclePack (selectionID, data) {
     d3.select(selectionID)
       .attr("height", 800)
       .attr("width", 1200)
@@ -354,7 +357,7 @@ function colorMap (svgSel, hslArray) { //eslint-disable-line
       }
   }
 
-  function bothCirclePacks(selectionID, data) { // eslint-disable-line
+  window.bothCirclePacks = function bothCirclePacks(selectionID, data) {
     d3.select(selectionID)
       .attr("height", 1440)
       .attr("width", 900)
