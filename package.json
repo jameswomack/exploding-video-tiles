@@ -13,7 +13,6 @@
     "css-loader": "^0.23.1",
     "eslint": "^2.11.1",
     "eslint-plugin-react": "^5.1.1",
-    "http-server": "^0.8.5",
     "jscs": "^3.0.4",
     "jsdom": "9.2.1",
     "style-loader": "^0.13.1",
@@ -26,11 +25,9 @@
   },
   "scripts": {
     "build": "NODE_ENV=production webpack",
-    "dev-server": "webpack-dev-server --hot --port 8081",
+    "new-school": "webpack-dev-server --hot --port 8081",
     "lint": "eslint new-school && jscs new-school",
-    "new-school": "npm run dev-server",
-    "old-school": "npm start",
-    "start": "http-server -e htm",
+    "start": "npm run new-school",
     "test": "tape -r babel-register -r ./tests/before.js tests/specs/*.js | tap-notify | tap-difflet"
   },
   "repository": {
