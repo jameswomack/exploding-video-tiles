@@ -3,6 +3,12 @@ import Metrics    from './metrics'
 import Tile       from './tile'
 import Tiles      from './tiles'
 
+/*
+  Organizing your code into modules
+
+  Sharing data across modules
+*/
+
 export default class CanvasVideoFrameProcessor {
   constructor ({
     videoEl,

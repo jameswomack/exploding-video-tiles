@@ -1,6 +1,10 @@
 import d3 from 'd3'
 
+/*
+  export
+*/
 
+// By named function declaration
 export function translateGroup (selectionID, {
   translateX  = 0,
   translateY  = 0,
@@ -16,7 +20,8 @@ export function translateGroup (selectionID, {
   .attr('transform', `translate(${translateX},${translateY})`)
 }
 
-export function translateGroupWithStroke (selectionID, {
+// Preceding a `const`, `let` or `var` declaration
+export const translateGroupWithStroke = (selectionID, {
   translateX  = 0,
   translateY  = 0,
   x1          = 0,
@@ -28,7 +33,7 @@ export function translateGroupWithStroke (selectionID, {
   selector    = `.${className}`,
   stroke      = 'gray',
   strokeWidth = '1px'
-} = { }) {
+} = { }) => {
   return translateGroup(selectionID, {
     selector, data, translateX, translateY
   })
@@ -41,7 +46,9 @@ export function translateGroupWithStroke (selectionID, {
   .attr('y2', y2)
 }
 
-export function circlePack (data) {
+// Taking an existing name and exporting it
+export { circlePack }
+function circlePack (data) {
   const dataHash = {}
   const newData  = []
 
@@ -80,13 +87,16 @@ export function circlePack (data) {
   return newData
 }
 
-export function getNest (data) {
+// Taking an existing name and exporting it as something else
+export { getNesty as getNest }
+function getNesty (data) {
   return d3.nest()
     .key(d => d.group)
     .key(d => d.rl)
     .entries(circlePack(data))
 }
 
+// Or the equivalent of `module.exports`, `export default setElementSize`
 
 export function setElementSize (selectionID, width, height) {
   return d3.select(selectionID)

@@ -3,12 +3,21 @@
 // See https://kangax.github.io/compat-table/es6/
 // See https://www.codementor.io/classes/es6-crash-course
 
+/*
+  import
+*/
+
+// Equivalent of `require`
 import listenToInputs                     from './event-delegates/form-input-listener'
 import scheduleHSLWorker                  from './scheduled-worker-manager'
 import ExplodingTiles                     from './containers/exploding-tiles'
+
+// import something as something else
 import { render as renderCirclePack }     from './components/circle-pack'
 import { render as renderHSLColorMap }    from './components/hsl-color-map'
 import { render as renderHueBar }         from './components/hue-bar'
+
+// Destructured imports (can be done with default and individual imports)
 import { matchesKeyCodes, isNotKeyCombo } from './event-delegates/keyboard'
 
 /*

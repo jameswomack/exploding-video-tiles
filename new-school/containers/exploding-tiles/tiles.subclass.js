@@ -3,56 +3,27 @@ import Tile from './tile'
 /*
   Subclassable built-ins
 */
-function Tiles () {
-  this.array = [ ]
-}
 
-Tiles.prototype.push = function (tile) {
-  if (!(tile instanceof Tile))
-    throw new TypeError('Tiles accepts only instances of Tile')
-
-  return this.array.push(tile)
-}
-
-Tiles.prototype.sort = function () {
-  return this.array.sort(zindexSort)
-}
-
-Tiles.prototype.reposition = function (canvasX, canvasY) {
-  return this.array.forEach(getTilePositioningFn(canvasX, canvasY))
-}
-
-Tiles.prototype.drawEach = function () {
-  return this.array.forEach(tile => tile.draw())
-}
-
-/*
-class Tiles {
-  constructor () {
-    this.array = [ ]
-  }
-
+class Tiles extends Array {
   push (tile) {
     if (!(tile instanceof Tile))
       throw new TypeError('Tiles accepts only instances of Tile')
 
-    return this.array.push(tile)
+    return super.push(tile)
   }
 
   sort () {
-    return this.array.sort(zindexSort)
+    return super.sort(zindexSort)
   }
 
   reposition (canvasX, canvasY) {
-    return this.array.forEach(getTilePositioningFn(canvasX, canvasY))
+    return this.forEach(getTilePositioningFn(canvasX, canvasY))
   }
 
   drawEach () {
-    return this.array.forEach(tile => tile.draw())
+    return this.forEach(tile => tile.draw())
   }
 }
-*/
-
 
 function zindexSort (a, b) {
   return a.force - b.force
